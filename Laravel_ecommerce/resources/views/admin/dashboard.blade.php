@@ -38,19 +38,24 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="text-center mt-5">
-        <a href="{{ route('admin.users') }}" class="btn btn-primary btn-lg shadow-sm me-3 px-4">
-            <i class="bi bi-people-fill me-1"></i> Manage Users
-        </a>
+<div class="text-center mt-5 d-flex justify-content-center flex-wrap gap-3">
+    <a href="{{ route('admin.users') }}" class="btn btn-primary btn-lg shadow-sm px-4">
+        <i class="bi bi-people-fill me-1"></i> Manage Users
+    </a>
 
-        <a href="{{ route('admin.categories.index') }}" class="btn btn-dark btn-lg shadow-sm me-3 px-4">
-            <i class="bi bi-tags-fill me-1"></i> Manage Categories
-        </a>
+    <a href="{{ route('admin.categories.index') }}" class="btn btn-dark btn-lg shadow-sm px-4">
+        <i class="bi bi-tags-fill me-1"></i> Manage Categories
+    </a>
 
-        <a href="{{ route('admin.products.create') }}" class="btn btn-success btn-lg shadow-sm px-4">
-            <i class="bi bi-box-seam me-1"></i> Add Product
-        </a>
-    </div>
+    <a href="{{ route('admin.products.create') }}" class="btn btn-success btn-lg shadow-sm px-4">
+        <i class="bi bi-box-seam me-1"></i> Add Product
+    </a>
+
+    <a href="{{ route('admin.products.index') }}" class="btn btn-info btn-lg shadow-sm px-4">
+        <i class="bi bi-boxes me-1"></i> Manage Products
+    </a>
+</div>
+
 
     <!-- Footer -->
     <div class="text-center mt-5 text-muted">
