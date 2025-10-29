@@ -21,7 +21,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        // load main categories with children
+        
         $categories = Category::with('children')->whereNull('parent_id')->get();
         return view('admin.products.create', compact('categories'));
     }
@@ -53,7 +53,7 @@ class ProductController extends Controller
             'subcategory_id'=>$request->subcategory_id,
         ]);
 
-        // store images
+        
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $idx => $image) {
                 $path = $image->store('products','public');
@@ -64,7 +64,7 @@ class ProductController extends Controller
             }
         }
 
-        // handle variants: sizes and colors are comma separated e.g. "S,M,L" and "Red,Blue"
+       
         $sizes = array_filter(array_map('trim', explode(',', $request->sizes ?? '')));
         $colors = array_filter(array_map('trim', explode(',', $request->colors ?? '')));
 
@@ -83,7 +83,7 @@ class ProductController extends Controller
                 }
             } else {
                 foreach ($colors as $c) {
-                    $combinations[]=['size'=>null,'color'=>$c];
+                    $combinations[]=['size'=>null,'color'   =>$c];
                 }
             }
 
@@ -102,17 +102,23 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('success','Product created.');
     }
 
-    public function show(Product $product)
-    {
-        $product->load('images','variants','category','subcategory');
+   
+public function show($id)
+{
+    $product = \App\Models\Product::with('images', 'variants', 'category', 'subcategory')->findOrFail($id);
+
+    
+    if (auth()->check() && auth()->user()->role === 'admin') {
         return view('admin.products.show', compact('product'));
     }
 
+    
+    return view('user.product_show', compact('product'));
+}
     public function edit(Product $product)
     {
     $categories = Category::whereNull('parent_id')->get();
     $subcategories = Category::whereNotNull('parent_id')->get();
-    // return view('admin.products.edit', compact('product', 'categories', 'subcategories'));
     return view('admin.products.create', compact('product', 'categories'));
     }
 
@@ -143,7 +149,6 @@ class ProductController extends Controller
             'subcategory_id'=>$request->subcategory_id,
         ]);
 
-        // new images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('products','public');
@@ -151,7 +156,6 @@ class ProductController extends Controller
             }
         }
 
-        // variants update: simple strategy - delete old and recreate (you can improve)
         if ($request->filled('sizes') || $request->filled('colors')) {
             $product->variants()->delete();
 
@@ -192,13 +196,43 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('success','Product updated.');
     }
 
-    public function destroy(Product $product)
-    {
-        // delete product images from storage
-        foreach ($product->images as $img) {
-            Storage::disk('public')->delete($img->path);
-        }
-        $product->delete();
-        return redirect()->route('admin.products.index')->with('success','Product deleted.');
+ public function Userdashboard(Request $request)
+{
+    $query = Product::with(['images', 'category', 'subcategory']);
+
+    $categoryIds = [];
+    if ($request->filled('category')) {
+        $categoryId = $request->category;
+
+        $categoryIds = Category::where('id', $categoryId)
+            ->orWhere('parent_id', $categoryId)
+            ->pluck('id');
+
+        $query->where(function ($sub) use ($categoryIds) {
+            $sub->whereIn('category_id', $categoryIds)
+                ->orWhereIn('subcategory_id', $categoryIds);
+        });
     }
+
+    if ($request->filled('min_price') && $request->filled('max_price')) {
+        $min = $request->min_price;
+        $max = $request->max_price;
+
+        $query->whereBetween('price', [$min, $max]);
+    }
+
+    if ($request->filled('search')) {
+        $query->where('title', 'like', '%' . $request->search . '%');
+    }
+
+    $products = $query->latest()->paginate(12);
+
+    $categories = Category::with('children')->whereNull('parent_id')->get();
+
+    return view('user.dashboard', compact('products', 'categories'));
+}
+
+
+
+    
 }

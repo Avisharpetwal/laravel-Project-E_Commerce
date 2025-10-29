@@ -11,19 +11,30 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
+// Route::get('/dashboard', function () {
+//     $user = auth()->user();
+//     if ($user->role === 'admin') {
+//         return redirect()->route('admin.dashboard');
+//     } else {
+//         return view('user.dashboard', ['user' => $user]);
+//     }
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+    Route::get('/dashboard', function () {
     $user = auth()->user();
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    } else {
-        return view('user.dashboard', ['user' => $user]);
-    }
+    return $user->role === 'admin'
+        ? redirect()->route('admin.dashboard')
+        : redirect()->route('user.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 // User routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'showProfile'])->name('profile.show');
     Route::post('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/user/dashboard', [ProductController::class, 'userDashboard'])->name('user.dashboard');
+    Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 });
 
 // Admin routes
@@ -43,13 +54,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/categories/{category}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
 
+    
 
-   
-   
-
-
-
-
+    
 });
+
+   
+
 
 require __DIR__.'/auth.php';

@@ -23,6 +23,8 @@
                 @endif
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ $p->title }}</h5>
+                    <!-- <p class="mb-1"><strong>Category:</strong> {{ $p->Category }}</p> -->
+
                     <!-- <p class="card-text text-muted small">{{ Str::limit($p->description,80) }}</p> -->
 
                     <p>
