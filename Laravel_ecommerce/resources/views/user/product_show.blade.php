@@ -1,35 +1,32 @@
 @extends('layouts.app')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 @section('content')
-<div class="container py-5">
 
-    <div class="row g-4">
-       
-        <div class="col-md-6">
+<div class="max-w-6xl mx-auto py-10 px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- LEFT: Product Images -->
+        <div>
             @if($product->images->count())
-                <div class="mb-3">
-                    <img id="mainImage" 
-                         src="{{ asset('storage/'.$product->images->first()->path) }}" 
-                         class="img-fluid rounded shadow-sm border" 
-                         style="height:400px; object-fit:cover;"
-                         alt="Main Product Image">
+                <div class="mb-4">
+                    <img id="mainImage"
+                        src="{{ asset('storage/'.$product->images->first()->path) }}"
+                        class="w-full h-96 object-cover rounded-lg shadow-md border"
+                        alt="Main Product Image">
                 </div>
 
-                <div class="d-flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2">
                     @foreach($product->images as $index => $img)
                         <img src="{{ asset('storage/'.$img->path) }}"
-                             class="img-thumbnail thumb-img"
-                             style="width:90px; height:90px; object-fit:cover; cursor:pointer; transition:0.3s;"
-                             onclick="changeImage('{{ asset('storage/'.$img->path) }}')"
-                             data-bs-toggle="modal" data-bs-target="#imageModal{{ $index }}"
-                             alt="Thumbnail">
-                        
-                        <!-- Modal for zoom view -->
+                            class="w-20 h-20 object-cover rounded cursor-pointer border hover:scale-105 transition"
+                            onclick="changeImage('{{ asset('storage/'.$img->path) }}')"
+                            data-bs-toggle="modal" data-bs-target="#imageModal{{ $index }}"
+                            alt="Thumbnail">
+
+                        <!-- Modal for zoom -->
                         <div class="modal fade" id="imageModal{{ $index }}" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-lg">
-                                <div class="modal-content bg-dark border-0">
+                                <div class="modal-content bg-black border-0">
                                     <div class="modal-body text-center p-0">
                                         <img src="{{ asset('storage/'.$img->path) }}" class="img-fluid rounded">
                                     </div>
@@ -42,70 +39,81 @@
                     @endforeach
                 </div>
             @else
-                <p class="text-muted">No images available for this product.</p>
+                <p class="text-gray-500">No images available for this product.</p>
             @endif
         </div>
 
         <!-- RIGHT: Product Details -->
-        <div class="col-md-6">
-            <h3 class="fw-bold">{{ $product->title }}</h3>
-            <p class="text-muted">{{ $product->description }}</p>
+        <div class="flex flex-col justify-between">
+            <div>
+                <h2 class="text-2xl font-bold mb-2">{{ $product->title }}</h2>
+                <p class="text-gray-600 mb-4">{{ $product->description }}</p>
 
-            {{-- Price Section --}}
-            @if ($product->discount > 0)
-                <h4 class="text-danger fw-bold">
-                    ₹{{ $product->price - ($product->price * $product->discount / 100) }}
-                </h4>
-                <p>
-                    <span class="text-muted text-decoration-line-through">₹{{ $product->price }}</span>
-                    <span class="text-success ms-2">(-{{ $product->discount }}%)</span>
-                </p>
-            @else
-                <h4 class="fw-bold">₹{{ $product->price }}</h4>
-            @endif
-
-            {{-- Stock Section --}}
-            <div class="mt-3">
-                @if($product->stock_qty > 0)
-                    <p class="text-success fw-semibold mb-1">
-                        In Stock: {{ $product->stock_qty }} available
+                <!-- 💰 Price -->
+                @if ($product->discount > 0)
+                    <h3 class="text-red-600 text-2xl font-semibold mb-1">
+                        ₹{{ $product->price - ($product->price * $product->discount / 100) }}
+                    </h3>
+                    <p>
+                        <span class="line-through text-gray-400">₹{{ $product->price }}</span>
+                        <span class="text-green-600 ml-2">-{{ $product->discount }}%</span>
                     </p>
                 @else
-                    <p class="text-danger fw-semibold mb-1">Out of Stock</p>
+                    <h3 class="text-2xl font-semibold mb-3">₹{{ $product->price }}</h3>
                 @endif
+
+                <!-- 📦 Stock Info -->
+                <div class="mt-4">
+                    @if($product->stock_qty > 0)
+                        <p class="text-green-600 font-medium">
+                            In Stock: {{ $product->stock_qty }} available
+                        </p>
+                    @else
+                        <p class="text-red-500 font-medium">Out of Stock</p>
+                    @endif
+                </div>
             </div>
 
-            {{-- Actions --}}
-            <div class="mt-4">
+            <!-- 🛍️ Buttons -->
+            <div class="mt-8 flex items-center space-x-4">
                 @if($product->stock_qty > 0)
-                    <button class="btn btn-success me-2">
-                        <i class="bi bi-cart"></i> Add to Cart
-                    </button>
+                    <!-- ✅ Add to Cart (Session Based) -->
+                    <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" 
+                                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md font-medium transition">
+                            🛒 Add to Cart
+                        </button>
+                    </form>
                 @else
-                    <button class="btn btn-secondary me-2" disabled>
-                        <i class="bi bi-cart-x"></i> Out of Stock
+                    <button class="bg-gray-400 text-white px-5 py-2 rounded-md" disabled>
+                        🛒 Out of Stock
                     </button>
                 @endif
-                <button class="btn btn-outline-danger">
-                    <i class="bi bi-heart"></i> Wishlist
-                </button>
+
+                <!-- 💖 Wishlist -->
+                @auth
+                    <form action="{{ route('wishlist.add', $product->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" 
+                                class="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-md font-medium transition">
+                            💖 Add to Wishlist
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" 
+                       class="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-md font-medium transition">
+                        💖 Wishlist
+                    </a>
+                @endauth
             </div>
         </div>
     </div>
 </div>
-
 
 <script>
 function changeImage(src) {
     document.getElementById('mainImage').src = src;
 }
 </script>
-
-
-<style>
-.thumb-img:hover {
-    transform: scale(1.05);
-    border: 2px solid #28a745;
-}
-</style>
 @endsection

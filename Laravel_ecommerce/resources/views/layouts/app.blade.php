@@ -2,33 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Laravel eCommerce</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config('app.name', 'Laravel eCommerce') }}</title>
+
+    {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
+
+    {{-- Bootstrap (agar kahin pe use ho raha ho) --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-50 text-gray-800">
 
-    <nav class="flex justify-between items-center bg-black text-white px-6 py-3">
-        <h1 class="text-lg font-semibold">Laravel eCommerce</h1>
-        <div>
-            @auth
-                <a href="{{ url('/dashboard') }}" class="mr-4">Dashboard</a>
-                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
-                    @csrf
-                    <button type="submit" class="text-red-500 hover:text-red-700">Logout</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="mr-4 text-white">Login</a>
-                <a href="{{ route('register') }}" class="text-white">Register</a>
-            @endauth
-        </div>
-    </nav>
+    {{-- ✅ Navbar --}}
+    @include('layouts.navigation')
 
-    <main class="p-6">
-
-
-    
+    {{-- ✅ Page Content --}}
+    <main class="p-6 min-h-screen">
         @yield('content')
     </main>
+
+    {{-- ✅ Footer (optional future use ke liye) --}}
+    <footer class="bg-black text-white text-center py-3">
+        <p class="mb-0 text-sm">&copy; {{ date('Y') }} Laravel eCommerce — All Rights Reserved.</p>
+    </footer>
+
+    {{-- Bootstrap JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

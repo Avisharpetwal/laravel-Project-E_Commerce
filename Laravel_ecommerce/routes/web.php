@@ -1,65 +1,154 @@
 <?php
 
+// use Illuminate\Support\Facades\Route;
+// use App\Http\Controllers\Admin\AdminController;
+// use App\Http\Controllers\UserController;
+// use App\Http\Controllers\ProfileController;
+// use App\Http\Controllers\Admin\CategoryController;
+// use App\Http\Controllers\Admin\ProductController;
+
+
+// use App\Http\Controllers\WishlistController;
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+// // Route::get('/dashboard', function () {
+// //     $user = auth()->user();
+// //     if ($user->role === 'admin') {
+// //         return redirect()->route('admin.dashboard');
+// //     } else {
+// //         return view('user.dashboard', ['user' => $user]);
+// //     }
+// // })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+//     Route::get('/dashboard', function () {
+//     $user = auth()->user();
+//     return $user->role === 'admin'
+//         ? redirect()->route('admin.dashboard')
+//         : redirect()->route('user.dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+// // User routes
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'showProfile'])->name('profile.show');
+//     Route::post('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update');
+//     Route::get('/user/dashboard', [ProductController::class, 'userDashboard'])->name('user.dashboard');
+//     Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+
+
+//      Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+//     Route::post('/wishlist/add/{id}', [WishlistController::class, 'add'])->name('wishlist.add');
+//     Route::post('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+// });
+
+// // Admin routes
+// Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+//     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+//     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+//     Route::post('/users/{user}/toggle', [AdminController::class, 'toggleBlock'])->name('admin.users.toggle');
+//     Route::resource('products', ProductController::class, ['as'=>'admin']);
+//     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
+//     Route::put('/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
+
+
+
+//     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+//     Route::post('/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+//     Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
+//     Route::post('/categories/{category}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
+//     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
+    
+
+    
+// });
+
+
+
+
+// use App\Http\Controllers\CartController;
+
+// Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+// Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+// Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+// Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+
+
+   
+
+
+// require __DIR__.'/auth.php';
+
+
+
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\CartController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/dashboard', function () {
-//     $user = auth()->user();
-//     if ($user->role === 'admin') {
-//         return redirect()->route('admin.dashboard');
-//     } else {
-//         return view('user.dashboard', ['user' => $user]);
-//     }
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-
-    Route::get('/dashboard', function () {
+// ---------------------- Authenticated Dashboard Redirect ----------------------
+Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     $user = auth()->user();
     return $user->role === 'admin'
         ? redirect()->route('admin.dashboard')
         : redirect()->route('user.dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->name('dashboard');
 
-
-// User routes
+// ---------------------- User Routes ----------------------
 Route::middleware('auth')->group(function () {
+    // Profile
     Route::get('/profile', [ProfileController::class, 'showProfile'])->name('profile.show');
     Route::post('/profile', [ProfileController::class, 'updateProfile'])->name('profile.update');
-    Route::get('/user/dashboard', [ProductController::class, 'userDashboard'])->name('user.dashboard');
+
+    // User Dashboard (Products)
+    Route::get('/user/dashboard', [ProductController::class, 'Userdashboard'])->name('user.dashboard');
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+
+    // Wishlist (Database-based)
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/add/{id}', [WishlistController::class, 'add'])->name('wishlist.add');
+    Route::post('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 });
 
-// Admin routes
+// ---------------------- Admin Routes ----------------------
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::post('/users/{user}/toggle', [AdminController::class, 'toggleBlock'])->name('admin.users.toggle');
-    Route::resource('products', ProductController::class, ['as'=>'admin']);
+
+    // Admin Products
+    Route::resource('products', ProductController::class, ['as' => 'admin']);
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
 
-
-
+    // Admin Categories
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
     Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
     Route::post('/categories/{category}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
-
-    
-
-    
 });
 
-   
+// ---------------------- Cart Routes (Session-based) ----------------------
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 
+// Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
 require __DIR__.'/auth.php';
+
