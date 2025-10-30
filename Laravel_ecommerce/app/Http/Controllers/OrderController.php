@@ -100,8 +100,25 @@ public function show($id)
     return view('orders.show', compact('order'));
 }
 
+// public function cancel(Order $order)
+// {
+//     if ($order->status !== 'Pending') {
+//         return redirect()->back()->with('error', 'Only pending orders can be cancelled.');
+//     }
+
+//     $order->update(['status' => 'Cancelled']);
+
+//     return redirect()->route('orders.show', $order->id)
+//                      ->with('success', 'Order has been cancelled successfully.');
+// }
 public function cancel(Order $order)
 {
+    // Sirf apne order cancel kar sake
+    if ($order->user_id !== auth()->id()) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    // Sirf pending cancel ho sakta hai
     if ($order->status !== 'Pending') {
         return redirect()->back()->with('error', 'Only pending orders can be cancelled.');
     }
