@@ -41,15 +41,35 @@ class CartController extends Controller
         return back()->with('success', 'Product added to cart!');
     }
 
-    public function update(Request $request, $id)
-    {
-        $cart = session()->get('cart', []);
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity'] = $request->quantity;
-            session()->put('cart', $cart);
+   public function update(Request $request, $id)
+{
+    $cart = session()->get('cart', []);
+    $product = Product::findOrFail($id);
+
+    if (isset($cart[$id])) {
+        $newQty = (int) $request->quantity;
+
+        // Validate quantity
+        if ($newQty < 1) {
+            return back()->with('error', 'Quantity must be at least 1.');
         }
+
+        // Check stock limit
+        if ($newQty > $product->stock_qty) {
+            $cart[$id]['quantity'] = $product->stock_qty;
+            session()->put('cart', $cart);
+            return back()->with('error', "Only {$product->stock_qty} items left in stock.");
+        }
+
+        // Update quantity if within range
+        $cart[$id]['quantity'] = $newQty;
+        session()->put('cart', $cart);
+
         return back()->with('success', 'Cart updated successfully!');
     }
+
+    return back()->with('error', 'Product not found in cart.');
+}
 
     public function remove($id)
     {

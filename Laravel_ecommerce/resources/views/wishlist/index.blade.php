@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -7,16 +8,37 @@
     @if($wishlist->count())
         <div class="row g-3">
             @foreach($wishlist as $item)
+                @php $product = $item->product; @endphp
                 <div class="col-md-3">
-                    <div class="card shadow-sm">
-                        @if($item->product->images->count())
-                            <img src="{{ asset('storage/'.$item->product->images->first()->path) }}" class="card-img-top" style="height:200px; object-fit:cover;">
-                        @endif
+                    <div class="card shadow-sm h-100">
+                        {{-- Product Image --}}
+                        <a href="{{ route('products.show', $product->id) }}">
+                            @if($product->images->count())
+                                <img src="{{ asset('storage/'.$product->images->first()->path) }}" 
+                                     class="card-img-top" 
+                                     style="height:200px; object-fit:cover;" 
+                                     alt="{{ $product->title }}">
+                            @else
+                                <img src="https://via.placeholder.com/300x200" 
+                                     class="card-img-top" 
+                                     style="height:200px; object-fit:cover;" 
+                                     alt="No Image">
+                            @endif
+                        </a>
+
+                        {{-- Product Info --}}
                         <div class="card-body text-center">
-                            <h6>{{ $item->product->title }}</h6>
-                            <form action="{{ route('wishlist.remove', $item->product->id) }}" method="POST">
+                            <a href="{{ route('products.show', $product->id) }}" 
+                               class="text-decoration-none text-dark fw-semibold">
+                                <h6 class="mb-2">{{ $product->title }}</h6>
+                            </a>
+
+                            {{-- Remove Button --}}
+                            <form action="{{ route('wishlist.remove', $product->id) }}" method="POST">
                                 @csrf
-                                <button class="btn btn-sm btn-danger mt-2">Remove</button>
+                                <button type="submit" class="btn btn-sm btn-danger mt-2">
+                                    <i class="bi bi-trash"></i> Remove
+                                </button>
                             </form>
                         </div>
                     </div>
