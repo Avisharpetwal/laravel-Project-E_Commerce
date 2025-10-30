@@ -30,6 +30,11 @@
                     @endif
                 </a>
 
+                {{-- 🧾 My Orders --}}
+               <a href="{{ route('orders.index') }}" class="hover:text-gray-300">
+                       📦 My Orders
+                 </a>
+
                 {{-- ❤️ Wishlist --}}
                 <a href="{{ route('wishlist.index') }}" class="relative hover:text-gray-300">
                     ❤️ Wishlist
@@ -48,6 +53,7 @@
                     @csrf
                     <button type="submit" class="text-red-400 hover:text-red-600">Logout</button>
                 </form>
+
             @endif
         @else
             {{-- 🔹 Guest Navbar --}}

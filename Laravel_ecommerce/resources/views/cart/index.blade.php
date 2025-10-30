@@ -11,9 +11,6 @@
 
 @section('content')
 
-
-
-
 <div class="container py-5">
     <h1 class="mb-4">Your Shopping Cart</h1>
 
@@ -66,5 +63,9 @@
     @else
         <h1>Your cart is empty!</h1>
     @endif
+</div>
+
+<div class="mt-4">
+    <a href="{{ route('checkout.form') }}" class="btn btn-success">Proceed to Checkout</a>
 </div>
 @endsection
