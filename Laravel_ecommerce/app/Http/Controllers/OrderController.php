@@ -100,5 +100,18 @@ public function show($id)
     return view('orders.show', compact('order'));
 }
 
+public function cancel(Order $order)
+{
+    if ($order->status !== 'Pending') {
+        return redirect()->back()->with('error', 'Only pending orders can be cancelled.');
+    }
+
+    $order->update(['status' => 'Cancelled']);
+
+    return redirect()->route('orders.show', $order->id)
+                     ->with('success', 'Order has been cancelled successfully.');
+}
+
+
 
 }

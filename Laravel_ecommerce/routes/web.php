@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/success', [OrderController::class, 'orderSuccess'])->name('orders.success');
     Route::get('/orders', [OrderController::class, 'myOrders'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
 });
 
 // ---------------------- Admin Routes ----------------------
