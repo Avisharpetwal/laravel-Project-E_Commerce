@@ -77,7 +77,7 @@
             <i class="bi bi-boxes me-1"></i> Manage Products
         </a>
 
-        <a href="{{ route('orders.index') }}" class="btn btn-warning btn-lg shadow-sm px-4 text-white">
+        <a href="{{ route('admin.manage.orders') }}" class="btn btn-warning btn-lg shadow-sm px-4 text-white">
             <i class="bi bi-clipboard-data me-1"></i> Manage Orders
         </a>
     </div>

@@ -77,7 +77,35 @@ class AdminController extends Controller
     //     return redirect()->back();
     // }
 
-    
+ public function manageOrders(Request $request)
+{
+    $query = Order::with('user');
+
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where('id', $search)
+              ->orWhereHas('user', function ($q) use ($search) {
+                  $q->where('name', 'like', "%$search%");
+              });
+    }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->input('status'));
+    }
+
+    $orders = $query->orderByDesc('id')->get();
+
+    return view('admin.manage_orders', compact('orders'));
+}
+
+public function updateOrderStatus(Request $request, $id)
+{
+    $order = \App\Models\Order::findOrFail($id);
+    $order->status = $request->status;
+    $order->save();
+
+    return back()->with('success', 'Order status updated successfully!');
+}
 
     
     

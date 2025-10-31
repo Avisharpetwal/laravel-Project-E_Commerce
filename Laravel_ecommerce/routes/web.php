@@ -56,13 +56,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('products', ProductController::class, ['as' => 'admin']);
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
-
+    
     // Admin Categories
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->name('admin.categories.store');
     Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
     Route::post('/categories/{category}/update', [CategoryController::class, 'update'])->name('admin.categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+    Route::get('/admin/manage-orders', [App\Http\Controllers\Admin\AdminController::class, 'manageOrders'])->name('admin.manage.orders');
+    Route::put('/admin/orders/{id}/update', [App\Http\Controllers\Admin\AdminController::class, 'updateOrderStatus'])->name('admin.update.order.status');
+
 });
 
 // ---------------------- Cart Routes (Session-based) ----------------------
