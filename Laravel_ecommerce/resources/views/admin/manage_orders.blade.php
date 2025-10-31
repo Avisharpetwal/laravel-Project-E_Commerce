@@ -7,32 +7,29 @@
             <h4 class="mb-2 mb-md-0"><i class="bi bi-box-seam"></i> All Orders</h4>
             
             <form method="GET" action="{{ route('admin.manage.orders') }}" class="d-flex flex-wrap gap-2 align-items-center">
-    <input 
-        type="text" 
-        name="search" 
-        value="{{ request('search') }}" 
-        class="form-control form-control-sm"
-        style="min-width: 250px; flex: 1;" 
-        placeholder="Search by user or order ID">
-    
-    <select name="status" class="form-select form-select-sm" style="width: 160px;">
-        <option value="">All Status</option>
-        <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
-        <option value="Shipped" {{ request('status') == 'Shipped' ? 'selected' : '' }}>Shipped</option>
-        <option value="Delivered" {{ request('status') == 'Delivered' ? 'selected' : '' }}>Delivered</option>
-        <option value="Cancelled" {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
-    </select>
+                <input 
+                    type="text" 
+                    name="search" 
+                    value="{{ request('search') }}" 
+                    class="form-control form-control-sm"
+                    style="min-width: 250px; flex: 1;" 
+                    placeholder="Search by user or order ID">
+                
+                <select name="status" class="form-select form-select-sm" style="width: 160px;">
+                    <option value="">All Status</option>
+                    <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="Shipped" {{ request('status') == 'Shipped' ? 'selected' : '' }}>Shipped</option>
+                    <option value="Delivered" {{ request('status') == 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                    <option value="Cancelled" {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                </select>
 
-    <button type="submit" class="btn btn-light btn-sm px-4">Filter</button>
-</form>
-
+                <button type="submit" class="btn btn-light btn-sm px-4">Filter</button>
+            </form>
         </div>
 
         <div class="card-body">
             @if(session('success'))
-                <div class="alert alert-success mb-4">
-                    {{ session('success') }}
-                </div>
+                <p class="text-success fw-semibold mb-4">{{ session('success') }}</p>
             @endif
 
             @if($orders->isEmpty())
@@ -50,6 +47,7 @@
                             <th>Total</th>
                             <th>Status</th>
                             <th>Change Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,6 +79,11 @@
                                         <option {{ $order->status == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                                     </select>
                                 </form>
+                            </td>
+                            <td>
+                                <a href="{{ route('orders.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> View Details
+                                </a>
                             </td>
                         </tr>
                         @endforeach
