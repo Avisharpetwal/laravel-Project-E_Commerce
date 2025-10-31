@@ -100,17 +100,7 @@ public function show($id)
     return view('orders.show', compact('order'));
 }
 
-// public function cancel(Order $order)
-// {
-//     if ($order->status !== 'Pending') {
-//         return redirect()->back()->with('error', 'Only pending orders can be cancelled.');
-//     }
 
-//     $order->update(['status' => 'Cancelled']);
-
-//     return redirect()->route('orders.show', $order->id)
-//                      ->with('success', 'Order has been cancelled successfully.');
-// }
 public function cancel(Order $order)
 {
     // Sirf apne order cancel kar sake
@@ -128,6 +118,44 @@ public function cancel(Order $order)
     return redirect()->route('orders.show', $order->id)
                      ->with('success', 'Order has been cancelled successfully.');
 }
+
+public function adminIndex(Request $request)
+    {
+        $query = Order::with('user');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('id', $search)
+                  ->orWhereHas('user', fn($q) => $q->where('name', 'like', "%$search%"));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->latest()->get();
+
+        return view('admin.manage_orders', compact('orders'));
+    }
+
+    // Show order details for admin
+    public function adminShow($id)
+    {
+        $order = Order::with('user', 'orderItems.product.images')->findOrFail($id);
+        return view('admin.order_show', compact('order'));
+    }
+
+    // Update order status by admin
+    public function adminUpdateStatus(Request $request, $id)
+    {
+        $request->validate(['status' => 'required|in:Pending,Shipped,Delivered,Cancelled']);
+
+        $order = Order::findOrFail($id);
+        $order->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Order status updated successfully.');
+    }
+
 
 
 

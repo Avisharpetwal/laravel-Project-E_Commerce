@@ -81,7 +81,7 @@
                                 </form>
                             </td>
                             <td>
-                                <a href="{{ route('orders.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
+                                <a href="{{ route('admin.order.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-eye"></i> View Details
                                 </a>
                             </td>

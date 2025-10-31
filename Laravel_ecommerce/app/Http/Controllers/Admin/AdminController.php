@@ -107,6 +107,13 @@ public function updateOrderStatus(Request $request, $id)
     return back()->with('success', 'Order status updated successfully!');
 }
 
+
+public function show(Order $order)
+    {
+        $order->load('user', 'orderItems.product.images');
+        return view('admin.order_show', compact('order'));
+    }
+
     
     
 }
