@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Admin\CouponController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -68,7 +69,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/manage-orders', [OrderController::class, 'adminIndex'])->name('admin.manage.orders');
     Route::get('/manage-orders/{id}', [OrderController::class, 'adminShow'])->name('admin.order.show');
     Route::put('/manage-orders/{id}/update-status', [OrderController::class, 'adminUpdateStatus'])->name('admin.update.order.status');
-});
+    Route::get('/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
+    Route::get('/coupons/create', [CouponController::class, 'create'])->name('admin.coupons.create');
+    Route::post('/coupons', [CouponController::class, 'store'])->name('admin.coupons.store');
+    Route::get('/coupons/{coupon}/edit', [CouponController::class, 'edit'])->name('admin.coupons.edit');
+    Route::put('/coupons/{coupon}', [CouponController::class, 'update'])->name('admin.coupons.update');
+    Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');});
 
 // ---------------------- Cart Routes (Session-based) ----------------------
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

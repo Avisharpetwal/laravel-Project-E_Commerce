@@ -80,6 +80,12 @@
         <a href="{{ route('admin.manage.orders') }}" class="btn btn-warning btn-lg shadow-sm px-4 text-white">
             <i class="bi bi-clipboard-data me-1"></i> Manage Orders
         </a>
+
+        <a href="{{ route('admin.coupons.index') }}" class="btn btn-danger btn-lg shadow-sm px-4">
+    <i class="bi bi-ticket-detailed me-1"></i> Manage Coupons
+</a>
+
+</a>
     </div>
 
     <!-- Top Selling Products -->
