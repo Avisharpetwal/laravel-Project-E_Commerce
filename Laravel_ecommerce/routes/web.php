@@ -22,6 +22,12 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
         : redirect()->route('user.dashboard');
 })->name('dashboard');
 
+
+// Public 
+Route::get('/products', [ProductController::class, 'Userdashboard'])->name('products.list');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/category/{id}/products', [ProductController::class, 'categoryProducts'])->name('products.category');
+
 // ---------------------- User Routes ----------------------
 Route::middleware('auth')->group(function () {
     // Profile
@@ -30,7 +36,7 @@ Route::middleware('auth')->group(function () {
 
     // User Dashboard (Products)
     Route::get('/user/dashboard', [ProductController::class, 'Userdashboard'])->name('user.dashboard');
-    Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+    // Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
     // Wishlist (Database-based)
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
