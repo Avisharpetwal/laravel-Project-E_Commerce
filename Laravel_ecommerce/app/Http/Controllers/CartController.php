@@ -109,7 +109,8 @@ class CartController extends Controller
 
         session(['coupon' => [
             'code' => $coupon->code,
-            'discount_amount' => $coupon->discount_amount
+            'discount_amount' => $coupon->discount_amount,
+            'minimum_value' => $coupon->minimum_value,
         ]]);
 
         return back()->with('success', 'Coupon applied successfully!');
