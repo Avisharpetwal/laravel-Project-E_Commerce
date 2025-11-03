@@ -28,7 +28,7 @@ class OrderConfirmedNotification extends Notification
         return (new MailMessage)
                     ->subject('Your Order is Confirmed')
                     ->greeting('Hello ' . $notifiable->name . ',')
-                    ->line('Your order (#' . $this->order->id . ') has been confirmed by the admin.')
+                    ->line('Your order (#' . $this->order->id . ') has been confirmed .')
                     ->action('View Order', url(route('orders.show', $this->order->id)))
                     ->line('Thank you for shopping with us!');
     }
