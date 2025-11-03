@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->decimal('total', 10, 2);
             $table->enum('status', ['Pending', 'Shipped', 'Delivered', 'Cancelled'])->default('Pending');
             $table->text('notes')->nullable();
+            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->string('coupon_code')->nullable();
             $table->timestamps();
         });
     }

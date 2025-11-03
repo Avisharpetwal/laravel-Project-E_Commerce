@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -19,7 +20,13 @@ class OrderController extends Controller
         $tax = $subtotal * 0.1;
         $total = $subtotal + $tax;
 
-        return view('checkout', compact('cart', 'subtotal', 'tax', 'total'));
+        $discount = 0;
+    if (session('coupon')) {
+        $discount = session('coupon')['discount_amount'];
+        $total -= $discount;
+    }
+
+        return view('checkout', compact('cart', 'subtotal', 'tax', 'total','discount'));
     }
 
     public function placeOrder(Request $request)
@@ -39,8 +46,19 @@ class OrderController extends Controller
 
         $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
         $tax = $subtotal * 0.1;
-        $total = $subtotal + $tax;
+       
 
+    $discount = 0;
+    $coupon_code = null;
+    if (session('coupon')) {
+        $coupon = session('coupon');
+        if ($subtotal >= $coupon['minimum_value']) {
+        $discount = session('coupon')['discount_amount'];
+        $coupon_code = session('coupon')['code'];
+        
+    }
+}
+ $total = $subtotal + $tax - $discount;
         // 🔹 Create Order
         $order = Order::create([
             'user_id' => auth()->id(),
@@ -50,6 +68,8 @@ class OrderController extends Controller
             'payment_method' => $request->payment_method,
             'notes' => $request->notes,
             'total' => $total,
+            'discount_amount' => $discount,         
+            'coupon_code' => $coupon_code,
         ]);
 
         // 🔹 Add items + reduce stock

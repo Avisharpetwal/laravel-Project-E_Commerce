@@ -37,8 +37,17 @@
 
         <h4>Order Summary</h4>
         <p>Subtotal: ₹{{ $subtotal }}</p>
-        <p>Tax: ₹{{ $tax }}</p>
-        <h5>Total: ₹{{ $total }}</h5>
+        <p>Tax (10%): ₹{{ $tax }}</p>
+
+        @if(isset($discount) && $discount > 0)
+            <p>Discount: -₹{{ $discount}}</p>
+        @endif
+
+        @php
+            $finalTotal = $subtotal + $tax - ($discount ?? 0);
+        @endphp
+
+        <h5>Total: ₹{{ $finalTotal }}</h5>
 
         <button type="submit" class="btn btn-success mt-3">Place Order</button>
     </form>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Coupon;
+use Carbon\Carbon;
 
 class CartController extends Controller
 {
@@ -12,7 +14,8 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
         $tax = $subtotal * 0.1; // 10% tax
-        $total = $subtotal + $tax;
+        $discount = session('coupon')['discount_amount'] ?? 0;
+        $total = $subtotal + $tax - $discount;
 
         return view('cart.index', compact('cart', 'subtotal', 'tax', 'total'));
     }
@@ -79,5 +82,42 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
         return back()->with('success', 'Product removed from cart!');
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        $request->validate([
+            'coupon_code' => 'required|string'
+        ]);
+
+        $coupon = Coupon::where('code', $request->coupon_code)->first();
+
+        if (!$coupon) {
+            return back()->with('error', 'Invalid coupon code.');
+        }
+
+        if (Carbon::now()->gt($coupon->expiry_date)) {
+            return back()->with('error', 'This coupon has expired.');
+        }
+
+        $cart = session()->get('cart', []);
+        $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+
+        if ($subtotal < $coupon->minimum_value) {
+            return back()->with('error', "This coupon requires a minimum order of ₹{$coupon->minimum_value}.");
+        }
+
+        session(['coupon' => [
+            'code' => $coupon->code,
+            'discount_amount' => $coupon->discount_amount
+        ]]);
+
+        return back()->with('success', 'Coupon applied successfully!');
+    }
+
+    public function removeCoupon()
+    {
+        session()->forget('coupon');
+        return back()->with('success', 'Coupon removed successfully!');
     }
 }

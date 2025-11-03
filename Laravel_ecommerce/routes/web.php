@@ -76,11 +76,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/coupons/{coupon}', [CouponController::class, 'update'])->name('admin.coupons.update');
     Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');});
 
-// ---------------------- Cart Routes (Session-based) ----------------------
+// ---------------------- Cart Routes (Session-based) ----------------------    
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 
 // Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 

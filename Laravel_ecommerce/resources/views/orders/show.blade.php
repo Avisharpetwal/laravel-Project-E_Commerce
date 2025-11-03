@@ -79,7 +79,8 @@
 
         @php
             $tax = $subtotal * 0.10;
-            $grandTotal = $subtotal + $tax;
+            $discount = $order->discount_amount ?? 0;
+            $grandTotal = $subtotal + $tax-$discount;
         @endphp
 
         <div class="text-end mt-4 pe-2">
