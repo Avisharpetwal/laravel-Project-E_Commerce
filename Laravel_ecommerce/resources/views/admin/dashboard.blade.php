@@ -13,6 +13,38 @@
         <p class="text-muted mt-3 fs-5">
             Welcome back, <strong>{{ Auth::user()->name }}</strong> 👋
         </p>
+        <!-- Notification Bell -->
+<div class="text-end mb-4">
+    <div class="dropdown">
+        <button class="btn btn-outline-dark position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-bell-fill fs-4"></i>
+            @if($unreadCount > 0)
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ $unreadCount }}
+                </span>
+            @endif
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notificationDropdown" style="width: 300px;">
+            <li class="dropdown-header fw-bold bg-light">Recent Notifications</li>
+
+            @forelse($notifications as $notification)
+                <li>
+                    <a href="#" class="dropdown-item small">
+                        <i class="bi bi-cart-check text-success me-1"></i>
+                        {{ $notification->data['message'] ?? 'New update available' }}
+                        <br>
+                        <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+            @empty
+                <li class="text-center text-muted p-2">No new notifications</li>
+            @endforelse
+        </ul>
+    </div>
+</div>
+
     </div>
 
     <!-- Stats Section -->
@@ -122,6 +154,18 @@
     </div>
 </div>
 
+<script>
+document.getElementById('notificationDropdown').addEventListener('click', function() {
+    fetch("{{ route('admin.notifications.read') }}", {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    });
+});
+</script>
+
+
 {{-- Custom Hover Effect --}}
 <style>
 .hover-card {
@@ -130,6 +174,17 @@
 .hover-card:hover {
     transform: translateY(-5px);
     box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+#notificationDropdown {
+    transition: transform 0.2s ease;
+}
+#notificationDropdown:hover {
+    transform: scale(1.1);
+}
+.dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
 }
 </style>
 @endsection

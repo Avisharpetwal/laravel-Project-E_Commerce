@@ -52,6 +52,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::post('/users/{user}/toggle', [AdminController::class, 'toggleBlock'])->name('admin.users.toggle');
+    
+    Route::post('/notifications/read', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back();
+    })->name('admin.notifications.read');
 
     // Admin Products
     Route::resource('products', ProductController::class, ['as' => 'admin']);
@@ -74,7 +79,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/coupons', [CouponController::class, 'store'])->name('admin.coupons.store');
     Route::get('/coupons/{coupon}/edit', [CouponController::class, 'edit'])->name('admin.coupons.edit');
     Route::put('/coupons/{coupon}', [CouponController::class, 'update'])->name('admin.coupons.update');
-    Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');});
+    Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');
+    Route::patch('/admin/orders/{order}/confirm', [OrderController::class, 'confirmOrder'])->name('admin.orders.confirm');
+});
 
 // ---------------------- Cart Routes (Session-based) ----------------------    
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

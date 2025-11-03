@@ -84,6 +84,17 @@
                                 <a href="{{ route('admin.order.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-eye"></i> View Details
                                 </a>
+                                 <!-- Confirm Order Button (only if status is Pending) -->
+    @if($order->status == 'Pending')
+        <form action="{{ route('admin.orders.confirm', $order->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to confirm this order?');">
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="btn btn-success btn-sm">
+                ✅ Confirm
+            </button>
+        </form>
+    @endif
+</td>
                             </td>
                         </tr>
                         @endforeach

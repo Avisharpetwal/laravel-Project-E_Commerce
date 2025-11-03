@@ -45,12 +45,18 @@ class AdminController extends Controller
             ->with('product')
             ->get();
 
+     $admin = auth()->user();
+    $notifications = $admin->notifications()->latest()->take(5)->get();
+    $unreadCount = $admin->unreadNotifications->count();
+
         return view('admin.dashboard', compact(
             'users',
             'admins',
             'totalOrders',
             'totalSales',
-            'topProducts'
+            'topProducts',
+            'notifications',
+            'unreadCount'
         ));
     }
 

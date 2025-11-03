@@ -6,6 +6,9 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Notifications\NewOrderNotification;
+use App\Notifications\OrderConfirmedNotification;
 
 class OrderController extends Controller
 {
@@ -88,6 +91,11 @@ class OrderController extends Controller
             }
         }
 
+
+    $admins = User::where('role', 'admin')->get();
+    foreach($admins as $admin){
+    $admin->notify(new NewOrderNotification($order));
+}
         // 🔹 Clear cart
         session()->forget('cart');
 
@@ -175,7 +183,21 @@ public function adminIndex(Request $request)
 
         return redirect()->back()->with('success', 'Order status updated successfully.');
     }
+    public function confirmOrder(Order $order)
+{
+    // Sirf pending orders hi confirm ho sakte hain
+    if ($order->status !== 'Pending') {
+        return redirect()->back()->with('error', 'Only pending orders can be confirmed.');
+    }
 
+    // Order ko confirm karo
+    $order->update(['status' => 'Confirmed']);
+
+    // User ko notification bhejo
+    $order->user->notify(new OrderConfirmedNotification($order));
+
+    return redirect()->back()->with('success', 'Order confirmed successfully! User has been notified.');
+}
 
 
 
