@@ -72,6 +72,21 @@
                         <p class="text-red-500 font-medium">Out of Stock</p>
                     @endif
                 </div>
+                <br>
+                <br>
+                <h5 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Variants:</h5>
+
+@if($product->variants->count())
+    <ul style="list-style-type: disc; padding-left: 20px; margin: 0;">
+        @foreach($product->variants as $v)
+            <li style="margin-bottom: 4px; color: #333; font-size: 14px;">
+                {{ $v->size ?? '-' }} / {{ $v->color ?? '-' }}
+            </li>
+        @endforeach
+    </ul>
+@else
+    <p style="color: #999; font-size: 14px; font-style: italic; margin: 0;">No variants.</p>
+@endif
             </div>
 
             <!-- 🛍️ Buttons -->

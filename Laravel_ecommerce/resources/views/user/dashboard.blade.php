@@ -1,3 +1,5 @@
+
+
 @extends('layouts.app')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -10,14 +12,14 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white fw-bold d-flex justify-content-between align-items-center">
                     <span>Categories</span>
-                    <a href="{{ route('user.dashboard') }}" class="text-white text-decoration-none small">Reset</a>
+                    <a href="{{ route('products.list') }}" class="text-white text-decoration-none small">Reset</a>
                 </div>
 
                 <div class="card-body">
                     {{-- Category List --}}
                     <ul class="list-group list-group-flush mb-3">
                         <li class="list-group-item">
-                            <a href="{{ route('user.dashboard') }}" 
+                            <a href="{{ route('products.list') }}" 
                                class="text-decoration-none fw-semibold {{ request('category') ? 'text-dark' : 'text-primary' }}">
                                 All Categories
                             </a>
@@ -25,7 +27,7 @@
 
                         @foreach ($categories as $cat)
                             <li class="list-group-item">
-                                <a href="{{ route('user.dashboard', ['category' => $cat->id]) }}" 
+                                <a href="{{ route('products.list', ['category' => $cat->id]) }}" 
                                    class="text-decoration-none fw-semibold {{ request('category') == $cat->id ? 'text-primary' : 'text-dark' }}">
                                     <i class="bi bi-folder-fill me-1 text-warning"></i> {{ $cat->name }}
                                 </a>
@@ -34,7 +36,7 @@
                                     <ul class="list-unstyled ps-3 mt-2">
                                         @foreach ($cat->children as $child)
                                             <li>
-                                                <a href="{{ route('user.dashboard', ['category' => $child->id]) }}" 
+                                                <a href="{{ route('products.list', ['category' => $child->id]) }}" 
                                                    class="text-decoration-none small {{ request('category') == $child->id ? 'text-primary fw-bold' : 'text-secondary' }}">
                                                     <i class="bi bi-chevron-right small"></i> {{ $child->name }}
                                                 </a>
@@ -46,8 +48,8 @@
                         @endforeach
                     </ul>
 
-                    {{-- 💰 Price Filter (inside category box) --}}
-                    <form action="{{ route('user.dashboard') }}" method="GET">
+                    {{-- 💰 Price Filter --}}
+                    <form action="{{ route('products.list') }}" method="GET">
                         @if (request('category'))
                             <input type="hidden" name="category" value="{{ request('category') }}">
                         @endif
@@ -128,9 +130,15 @@
                                 <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-outline-primary">
                                     View
                                 </a>
+
                                 <div>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-heart"></i></button>
-                                    <button class="btn btn-sm btn-outline-success"><i class="bi bi-cart"></i></button>
+                                    @auth
+                                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-heart"></i></button>
+                                        <button class="btn btn-sm btn-outline-success"><i class="bi bi-cart"></i></button>
+                                    @else
+                                        <a href="{{ route('login') }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-heart"></i></a>
+                                        <a href="{{ route('login') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-cart"></i></a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
@@ -148,3 +156,4 @@
     </div>
 </div>
 @endsection
+

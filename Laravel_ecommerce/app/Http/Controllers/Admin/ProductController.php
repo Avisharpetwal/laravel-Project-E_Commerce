@@ -225,7 +225,7 @@ public function show($id)
         $query->where('title', 'like', '%' . $request->search . '%');
     }
 
-    $products = $query->latest()->paginate(12);
+    $products = $query->latest()->paginate(9);
 
     $categories = Category::with('children')->whereNull('parent_id')->get();
 
