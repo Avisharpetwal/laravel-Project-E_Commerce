@@ -191,15 +191,15 @@ public function adminIndex(Request $request)
     }
     public function confirmOrder(Order $order)
 {
-    // Sirf pending orders hi confirm ho sakte hain
+    // Only Pending order ->Confirm
     if ($order->status !== 'Pending') {
         return redirect()->back()->with('error', 'Only pending orders can be confirmed.');
     }
 
-    // Order ko confirm karo
+    // Order To Confirm
     $order->update(['status' => 'Confirmed']);
 
-    // User ko notification bhejo
+    //  notification To User
     $order->user->notify(new OrderConfirmedNotification($order));
 
     return redirect()->back()->with('success', 'Order confirmed successfully! User has been notified.');

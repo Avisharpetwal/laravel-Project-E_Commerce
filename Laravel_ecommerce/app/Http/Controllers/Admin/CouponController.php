@@ -8,12 +8,15 @@ use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
+
+    //Show All Coupons
     public function index()
     {
         $coupons = Coupon::latest()->get();
         return view('admin.coupons.index', compact('coupons'));
     }
-
+   
+    //Create A Coupon
     public function create()
     {
         return view('admin.coupons.create');
@@ -32,12 +35,14 @@ class CouponController extends Controller
 
         return redirect()->route('admin.coupons.index')->with('success', 'Coupon created successfully!');
     }
-
+   
+    //Edit A Coupon
     public function edit(Coupon $coupon)
     {
         return view('admin.coupons.edit', compact('coupon'));
     }
 
+    //Update The Coupon
     public function update(Request $request, Coupon $coupon)
     {
         $request->validate([

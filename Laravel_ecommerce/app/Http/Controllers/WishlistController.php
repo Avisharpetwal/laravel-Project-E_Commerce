@@ -18,6 +18,7 @@ class WishlistController extends Controller
         return view('wishlist.index', compact('wishlist'));
     }
 
+    //Product Add To Wishlist
     public function add($id)
     {
         $product = Product::findOrFail($id);
@@ -30,6 +31,7 @@ class WishlistController extends Controller
         return back()->with('success', 'Product added to wishlist!');
     }
 
+    //Remove Product From Wishlist
     public function remove($id)
     {
         Wishlist::where('user_id', Auth::id())

@@ -13,19 +13,22 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+
+    //All Products
     public function index()
     {
         $products = Product::with('category','subcategory','images','variants')->latest()->paginate(12);
         return view('admin.products.index', compact('products'));
     }
 
+    //Add A Product
     public function create()
     {
         
         $categories = Category::with('children')->whereNull('parent_id')->get();
         return view('admin.products.create', compact('categories'));
     }
-
+  
     public function store(Request $request)
     {
         $request->validate([
@@ -103,8 +106,8 @@ class ProductController extends Controller
     }
 
    
-public function show($id)
-{
+    public function show($id)
+    {
     $product = \App\Models\Product::with('images', 'variants', 'category', 'subcategory')->findOrFail($id);
 
     
@@ -114,7 +117,10 @@ public function show($id)
 
     
     return view('user.product_show', compact('product'));
-}
+    }
+
+
+
     public function edit(Product $product)
     {
     $categories = Category::whereNull('parent_id')->get();

@@ -146,11 +146,73 @@
             </tbody>
         </table>
     </div>
+    <!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="card mt-5 p-4">
+    <h5 class="mb-4">Sales Overview (Today / Weekly / Monthly / Total)</h5>
+    <canvas id="salesGraph" height="250"></canvas>
+</div>
+
+<script>
+    const ctx = document.getElementById('salesGraph').getContext('2d');
+
+    const data = {
+        labels: ['Today', 'This Week', 'This Month', 'Total'],
+        datasets: [{
+            label: 'Sales in ₹',
+            data: [
+                {{ $todaySales }},
+                {{ $weekSales }},
+                {{ $monthSales }},
+                {{ $totalSales }}
+            ],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(153, 102, 255, 0.6)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Sales Summary'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Amount (₹)' }
+                }
+            }
+        },
+    };
+
+    new Chart(ctx, config);
+</script>
+
+    
 
     <!-- Footer -->
     <div class="text-center mt-5 text-muted">
         <hr>
-        <small>© {{ date('Y') }} E-commerce Admin Panel | Designed with ❤️ by Avi</small>
+        <small>© {{ date('Y') }} E-commerce Admin Panel | Designed with ❤️ by Avishar</small>
     </div>
 </div>
 

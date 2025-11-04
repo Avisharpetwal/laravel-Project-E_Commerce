@@ -13,7 +13,9 @@ class CategoryController extends Controller
         $categories = Category::whereNull('parent_id')->with('children')->get();
         return view('admin.categories.index', compact('categories'));
     }
+   
 
+    //Create The Category + Sub Category
     public function store(Request $request)
     {
         $request->validate(['name' => 'required|string|max:255']);
@@ -25,11 +27,15 @@ class CategoryController extends Controller
         return redirect()->back()->with('success', 'Category created successfully!');
     }
 
+
+    //Edit The Category
     public function edit(Category $category)
     {
         return view('admin.categories.edit', compact('category'));
     }
+    
 
+    //Update The Category
     public function update(Request $request, Category $category)
     {
         $request->validate(['name' => 'required|string|max:255']);
@@ -43,7 +49,7 @@ class CategoryController extends Controller
         return redirect()->back()->with('success', 'Category deleted!');
     }
 
-
+    //Sub Category
     public function getSubcategories($id)
     {
         $subcategories = Category::where('parent_id', $id)->get();
