@@ -36,11 +36,17 @@ class OrderController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
+            'phone' => 'required|digits:10',
             'address' => 'required|string',
             'payment_method' => 'required|string',
             'notes' => 'nullable|string'
-        ]);
+        ],[
+        'name.required' => 'This field is required.',
+        'phone.required' => 'This field is required.',
+        'phone.digits' => 'Phone number must be 10 digits.',
+        'address.required' => 'This field is required.',
+        'payment_method.required' => 'This field is required.',
+    ]);
 
         $cart = session()->get('cart', []);
         if (empty($cart)) {
