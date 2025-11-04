@@ -50,8 +50,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'myOrders'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('/products/{product}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/products/{product}/reviews/video-upload', [\App\Http\Controllers\ReviewController::class, 'uploadVideo'])->name('reviews.uploadVideo');
+    Route::post('/products/{id}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-});
+
+}); 
 
 // ---------------------- Admin Routes ----------------------
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {

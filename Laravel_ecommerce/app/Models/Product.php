@@ -41,4 +41,15 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class,'subcategory_id');
     }
+
+    public function reviews() 
+    { 
+        return $this->hasMany(\App\Models\Review::class);
+    }
+
+public function avgRating()
+{
+    return round($this->reviews()->where('approved', true)->avg('rating') ?? 0, 1);
+}
+
 }
