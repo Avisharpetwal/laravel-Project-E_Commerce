@@ -5,8 +5,6 @@
 @if(session('error'))
     <div class="alert alert-danger">{{ session('error') }}</div>
 @endif
-
-
 @extends('layouts.app')
 
 @section('content')
@@ -37,13 +35,12 @@
                         <td>{{ $item['name'] }}</td>
                         <td>₹{{ $item['price'] }}</td>
                         <td>
-                            <form action="{{ route('cart.update', $id) }}" method="POST" class="d-inline">
-                                @csrf
-                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" style="width:60px;">
-                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-                            </form>
+                            <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" 
+       max="{{ \App\Models\Product::find($id)->stock_qty }}" 
+       style="width:60px;" class="cart-quantity" data-id="{{ $id }}">
+
                         </td>
-                        <td>₹{{ $item['price'] * $item['quantity'] }}</td>
+                        <td class="item-subtotal">₹{{ $item['price'] * $item['quantity'] }}</td>
                         <td>
                             <form action="{{ route('cart.remove', $id) }}" method="POST">
                                 @csrf
@@ -80,12 +77,14 @@
         @endif
 
         <div class="mt-4">
-            <h5>Subtotal: ₹{{ $subtotal }}</h5>
-            <h6>Tax (10%): ₹{{ $tax }}</h6>
+            <h5>Subtotal: <span id="subtotal">₹{{ $subtotal }}</span></h5>
+            <h6>Tax (10%): <span id="tax">₹{{ $tax }}</span></h6>
             @if(session('coupon'))
-                <h6>Discount: -₹{{ session('coupon')['discount_amount'] }}</h6>
+                <h6>Discount: <span id="discount">-₹{{ session('coupon')['discount_amount'] }}</span></h6>
+            @else
+                <h6>Discount: <span id="discount">₹0</span></h6>
             @endif
-            <h4 class="fw-bold">Total: ₹{{ $total }}</h4>
+            <h4 class="fw-bold">Total: <span id="total">₹{{ $total }}</span></h4>
         </div>
 
     @else
@@ -96,4 +95,46 @@
 <div class="mt-4">
     <a href="{{ route('checkout.form') }}" class="btn btn-success">Proceed to Checkout</a>
 </div>
+
+<!-- AJAX Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.cart-quantity').on('change', function() {
+        let id = $(this).data('id');
+        let quantity = $(this).val();
+        let token = "{{ csrf_token() }}";
+
+        $.ajax({
+            url: '/cart/update/' + id,
+            method: 'POST',
+            data: {
+                _token: token,
+                quantity: quantity
+            },
+            success: function(response) {
+                if(response.success) {
+                    // Update item subtotal
+                    $('input[data-id="'+id+'"]').closest('tr').find('.item-subtotal').text('₹' + response.itemSubtotal);
+
+                    // Update cart totals
+                    $('#subtotal').text('₹' + response.subtotal);
+                    $('#tax').text('₹' + response.tax);
+                    $('#total').text('₹' + response.total);
+
+                    // Update discount if coupon applied
+                    if(response.coupon) {
+                        $('#discount').text('-₹' + response.coupon.discount_amount);
+                    } else {
+                        $('#discount').text('₹0');
+                    }
+                } else {
+                    alert(response.message);
+                }
+            }
+        });
+    });
+});
+</script>
+
 @endsection

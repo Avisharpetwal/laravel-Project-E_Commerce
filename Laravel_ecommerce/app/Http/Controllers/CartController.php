@@ -44,7 +44,37 @@ class CartController extends Controller
         return back()->with('success', 'Product added to cart!');
     }
 
-   public function update(Request $request, $id)
+//    public function update(Request $request, $id)
+// {
+//     $cart = session()->get('cart', []);
+//     $product = Product::findOrFail($id);
+
+//     if (isset($cart[$id])) {
+//         $newQty = (int) $request->quantity;
+
+//         // Validate quantity
+//         if ($newQty < 1) {
+//             return back()->with('error', 'Quantity must be at least 1.');
+//         }
+
+//         // Check stock limit
+//         if ($newQty > $product->stock_qty) {
+//             $cart[$id]['quantity'] = $product->stock_qty;
+//             session()->put('cart', $cart);
+//             return back()->with('error', "Only {$product->stock_qty} items left in stock.");
+//         }
+
+//         // Update quantity if within range
+//         $cart[$id]['quantity'] = $newQty;
+//         session()->put('cart', $cart);
+
+//         return back()->with('success', 'Cart updated successfully!');
+//     }
+
+//     return back()->with('error', 'Product not found in cart.');
+// }
+
+    public function update(Request $request, $id)
 {
     $cart = session()->get('cart', []);
     $product = Product::findOrFail($id);
@@ -54,24 +84,38 @@ class CartController extends Controller
 
         // Validate quantity
         if ($newQty < 1) {
-            return back()->with('error', 'Quantity must be at least 1.');
+            $newQty = 1; // fallback to minimum
         }
 
         // Check stock limit
         if ($newQty > $product->stock_qty) {
-            $cart[$id]['quantity'] = $product->stock_qty;
-            session()->put('cart', $cart);
-            return back()->with('error', "Only {$product->stock_qty} items left in stock.");
+            $newQty = $product->stock_qty;
         }
 
-        // Update quantity if within range
+        // Update quantity
         $cart[$id]['quantity'] = $newQty;
         session()->put('cart', $cart);
 
-        return back()->with('success', 'Cart updated successfully!');
+        // Recalculate totals
+        $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $tax = $subtotal * 0.1; // 10% tax
+        $discount = session('coupon')['discount_amount'] ?? 0;
+        $total = $subtotal + $tax - $discount;
+
+        // Item subtotal
+        $itemSubtotal = $cart[$id]['price'] * $cart[$id]['quantity'];
+
+        return response()->json([
+            'success' => true,
+            'itemSubtotal' => $itemSubtotal,
+            'subtotal' => $subtotal,
+            'tax' => $tax,
+            'total' => $total,
+            'coupon' => session('coupon') ?? null
+        ]);
     }
 
-    return back()->with('error', 'Product not found in cart.');
+    return response()->json(['success' => false, 'message' => 'Product not found in cart.']);
 }
 
     public function remove($id)
