@@ -24,6 +24,19 @@
                         </span>
                         <br>
                         <a href="{{ route('orders.show', $order->id) }}" class="btn btn-primary btn-sm mt-2">View Details</a>
+
+                        <!-- ✅ Add Review Buttons for each product -->
+                        @if($order->orderItems && $order->orderItems->count())
+                            @foreach($order->orderItems as $item)
+                                @php $product = $item->product; @endphp
+                                @if($product)
+                                    <a href="{{ route('products.show', $product->id) }}#reviewSection" 
+                                       class="btn btn-success btn-sm mt-2">
+                                       Add Review for {{ $product->title }}
+                                    </a>
+                                @endif
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>

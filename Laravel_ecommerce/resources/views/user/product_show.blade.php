@@ -142,7 +142,7 @@
     </div>
 
     <!-- 📝 Reviews Section -->
-    <div class="mt-10 border-t pt-6">
+    <div  id="reviewSection" class="mt-10 border-t pt-6">
         <h3 class="text-xl font-bold mb-4">Customer Reviews</h3>
         @if($product->reviews->count())
             @foreach($product->reviews as $review)
