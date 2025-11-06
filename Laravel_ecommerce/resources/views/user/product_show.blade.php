@@ -76,12 +76,9 @@
 
                 <!-- 📦 Stock Info -->
                 <div class="mt-4">
-                    @if($product->stock_qty > 0)
-                        <p class="text-green-600 font-medium">
-                            In Stock: {{ $product->stock_qty }} available
-                        </p>
-                    @else
+                    @if($product->stock_qty < 0)
                         <p class="text-red-500 font-medium">Out of Stock</p>
+                        </p>
                     @endif
                 </div>
 
