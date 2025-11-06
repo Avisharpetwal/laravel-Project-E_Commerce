@@ -38,6 +38,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/dashboard', [ProductController::class, 'Userdashboard'])->name('user.dashboard');
     // Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
+    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+    Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
+
     // Wishlist (Database-based)
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/add/{id}', [WishlistController::class, 'add'])->name('wishlist.add');
@@ -95,11 +101,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 // ---------------------- Cart Routes (Session-based) ----------------------    
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
-Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
+
 
 // Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
