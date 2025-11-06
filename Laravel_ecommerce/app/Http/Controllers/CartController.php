@@ -20,29 +20,71 @@ class CartController extends Controller
         return view('cart.index', compact('cart', 'subtotal', 'tax', 'total'));
     }
 
+    // public function add(Request $request, $id)
+    // {
+    //     $product = Product::findOrFail($id);
+    //     $cart = session()->get('cart', []);
+
+    //     if (isset($cart[$id])) {
+    //         $cart[$id]['quantity']++;
+    //     } else {
+    //         $discounted = $product->discount > 0 
+    //             ? $product->price - ($product->price * $product->discount / 100)
+    //             : $product->price;
+
+    //         $cart[$id] = [
+    //             'name' => $product->title,
+    //             'price' => $discounted,
+    //             'quantity' => 1,
+    //             'image' => $product->images->first()->path ?? null,
+    //         ];
+    //     }
+
+    //     session()->put('cart', $cart);
+    //     return back()->with('success', 'Product added to cart!');
+    // }
+
+
+
     public function add(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
-        $cart = session()->get('cart', []);
+{
+    $product = Product::findOrFail($id);
+    $cart = session()->get('cart', []);
 
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
-        } else {
-            $discounted = $product->discount > 0 
-                ? $product->price - ($product->price * $product->discount / 100)
-                : $product->price;
+    $qtyToAdd = (int) $request->quantity ?? 1; // default 1
 
-            $cart[$id] = [
-                'name' => $product->title,
-                'price' => $discounted,
-                'quantity' => 1,
-                'image' => $product->images->first()->path ?? null,
-            ];
+    if (isset($cart[$id])) {
+        // existing quantity + new requested quantity
+        $newQty = $cart[$id]['quantity'] + $qtyToAdd;
+
+        // stock check
+        if ($newQty > $product->stock_qty) {
+            $newQty = $product->stock_qty; // max stock allowed
         }
 
-        session()->put('cart', $cart);
-        return back()->with('success', 'Product added to cart!');
+        $cart[$id]['quantity'] = $newQty;
+    } else {
+        // stock check for first add
+        if ($qtyToAdd > $product->stock_qty) {
+            $qtyToAdd = $product->stock_qty;
+        }
+
+        $discounted = $product->discount > 0 
+            ? $product->price - ($product->price * $product->discount / 100)
+            : $product->price;
+
+        $cart[$id] = [
+            'name' => $product->title,
+            'price' => $discounted,
+            'quantity' => $qtyToAdd,
+            'image' => $product->images->first()->path ?? null,
+        ];
     }
+
+    session()->put('cart', $cart);
+    return back()->with('success', 'Product added to cart!');
+}
+
 
 //    public function update(Request $request, $id)
 // {
