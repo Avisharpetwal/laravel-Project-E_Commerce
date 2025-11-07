@@ -12,12 +12,27 @@
 
     <div class="row mt-4">
         <div class="col-md-6">
-            @if($product->images->count())
-                <img src="{{ asset('storage/'.$product->images->first()->path) }}" class="img-fluid rounded">
+        @if($product->images->count())
+        @php
+        $first = $product->images->first();
+        @endphp
+
+        <div id="main-media">
+            @if($first->type === 'video')
+                <video src="{{ asset('storage/'.$first->path) }}" class="img-fluid rounded" controls style="max-height:400px; width:100%; object-fit:cover;"></video>
+            @else
+                <img src="{{ asset('storage/'.$first->path) }}" class="img-fluid rounded" style="max-height:400px; width:100%; object-fit:cover;">
+            @endif
+        </div>
+
                 <div class="mt-2 d-flex gap-2 flex-wrap">
-                    @foreach($product->images as $img)
-                        <div style="width:70px;height:70px;overflow:hidden">
-                            <img src="{{ asset('storage/'.$img->path) }}" style="width:100%;height:100%;object-fit:cover">
+                    @foreach($product->images as $file)
+                        <div style="width:70px;height:70px;overflow:hidden; cursor:pointer;">
+                            @if($file->type === 'video')
+                                <video src="{{ asset('storage/'.$file->path) }}" style="width:100%;height:100%;object-fit:cover;" muted></video>
+                            @else
+                                <img src="{{ asset('storage/'.$file->path) }}" style="width:100%;height:100%;object-fit:cover;">
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -52,4 +67,40 @@
         <p>{{ $product->description }}</p>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbnails = document.querySelectorAll('.d-flex.flex-wrap div');
+    const mainContainer = document.getElementById('main-media');
+
+    thumbnails.forEach(th => {
+        th.addEventListener('click', function() {
+            const media = th.querySelector('img, video');
+            const isVideo = media.tagName.toLowerCase() === 'video';
+            const src = media.getAttribute('src');
+
+            mainContainer.innerHTML = '';
+
+            if(isVideo){
+                const video = document.createElement('video');
+                video.src = src;
+                video.controls = true;
+                video.autoplay = true;
+                video.style.width = '100%';
+                video.style.maxHeight = '400px';
+                video.style.objectFit = 'cover';
+                mainContainer.appendChild(video);
+            } else {
+                const img = document.createElement('img');
+                img.src = src;
+                img.style.width = '100%';
+                img.style.maxHeight = '400px';
+                img.style.objectFit = 'cover';
+                img.classList.add('img-fluid', 'rounded');
+                mainContainer.appendChild(img);
+            }
+        });
+    });
+});
+</script>
 @endsection

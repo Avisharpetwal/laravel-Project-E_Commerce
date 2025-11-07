@@ -40,7 +40,8 @@ class ProductController extends Controller
             'stock_qty'=>'required|integer|min:0',
             'category_id'=>'nullable|exists:categories,id',
             'subcategory_id'=>'nullable|exists:categories,id',
-            'images.*'=>'nullable|image|max:5120', // 5MB
+            // 'images.*'=>'nullable|image|max:5120', // 5MB
+            'media.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi,webm|max:20480',
             'sizes'=>'nullable|string',
             'colors'=>'nullable|string',
         ]);
@@ -57,15 +58,21 @@ class ProductController extends Controller
         ]);
 
         
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $idx => $image) {
-                $path = $image->store('products','public');
-                $product->images()->create([
-                    'path'=>$path,
-                    'is_featured'=>($idx==0)
-                ]);
-            }
-        }
+        if ($request->hasFile('media')) {
+    foreach ($request->file('media') as $idx => $file) {
+        $path = $file->store('products', 'public');
+        $extension = $file->getClientOriginalExtension();
+
+        // Detect if it's a video or image
+        $type = in_array(strtolower($extension), ['mp4','mov','avi','webm']) ? 'video' : 'image';
+
+        $product->images()->create([
+            'path' => $path,
+            'type' => $type,
+            'is_featured' => ($idx == 0)
+        ]);
+    }
+}
 
        
         $sizes = array_filter(array_map('trim', explode(',', $request->sizes ?? '')));

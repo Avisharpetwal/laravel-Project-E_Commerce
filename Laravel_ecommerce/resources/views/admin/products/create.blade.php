@@ -76,14 +76,19 @@
             </div>
         </div>
 
-        <div class="mb-3 mt-3">
-            <label class="form-label fw-bold">Product Images (Multiple)</label>
-            <input type="file" name="images[]" accept="image/*" multiple class="form-control">
+                    <div class="mb-3 mt-3">
+            <label class="form-label fw-bold">Product Media (Images or Videos)</label>
+            <input type="file" name="media[]" accept="image/*,video/*" multiple class="form-control">
+
             @if(isset($product) && $product->images->count())
-                <div class="mt-2 d-flex gap-2 flex-wrap">
-                    @foreach($product->images as $img)
-                        <div style="width:80px; height:80px; overflow:hidden; border-radius:6px;">
-                            <img src="{{ asset('storage/'.$img->path) }}" style="width:100%; height:100%; object-fit:cover;">
+                <div class="mt-3 d-flex flex-wrap gap-3">
+                    @foreach($product->images as $file)
+                        <div style="width:120px; height:120px; border-radius:8px; overflow:hidden; background:#f8f9fa; display:flex; align-items:center; justify-content:center;">
+                            @if($file->type === 'video')
+                                <video src="{{ asset('storage/'.$file->path) }}" controls style="width:100%; height:100%; object-fit:cover;"></video>
+                            @else
+                                <img src="{{ asset('storage/'.$file->path) }}" style="width:100%; height:100%; object-fit:cover;">
+                            @endif
                         </div>
                     @endforeach
                 </div>
