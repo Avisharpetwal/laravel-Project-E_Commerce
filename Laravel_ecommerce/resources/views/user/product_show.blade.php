@@ -18,7 +18,7 @@
                     </div>
                 </div>
 
-                
+
                 <div class="flex flex-wrap gap-2">
                     @foreach($product->images as $index => $file)
                         <div class="w-20 h-20 border rounded overflow-hidden cursor-pointer hover:scale-105 transition" onclick="changeMedia('{{ asset('storage/'.$file->path) }}', '{{ $file->type }}')">
@@ -231,20 +231,95 @@
                     <!-- Comment -->
                     <textarea name="comment" rows="3" class="w-full border rounded-md p-2 mb-3" placeholder="Write your review..." required></textarea>
 
-                    <!-- Image Upload -->
+                    <!-- Image Upload
                     <label class="block mb-2 font-medium">Upload Image:</label>
                     <input type="file" name="images[]" accept="image/*" id="imageInput" class="mb-3" multiple>
-                    <div id="imagePreviewContainer" class="flex gap-2 flex-wrap mb-3"></div>
+                    <div id="imagePreviewContainer" class="flex gap-2 flex-wrap mb-3"></div> -->
 
                     
                     <!-- Drag & Drop + Image/Video Upload -->
-                   <label class="block mb-2 font-medium">Upload Video:</label>
-                   <input type="file" name="video" id="dropVideoInput" accept="video/mp4,video/webm" class="hidden">
-                   <div id="dropVideoArea" class="border border-dashed border-gray-400 rounded p-4 text-center cursor-pointer mb-2">
-                    Drag & Drop your video here or click to upload
+                   <label class="block mb-2 font-medium">Upload Image/Video:</label>
+                   <input type="file" id="mediaInput" name="media_files[]" accept="image/*,video/mp4,video/webm" multiple class="hidden">
+                   <div id="mediaDropArea" class="border-2 border-dashed border-gray-400 rounded p-4 text-center cursor-pointer mb-3">
+                    Drag & Drop your images or videos here or click to upload
                     </div>
-                    <p id="videoError" class="text-red-500 text-sm mb-3 hidden"></p>
-                    <video id="videoPreview" class="w-60 rounded border mb-2" controls></video>
+
+                    <p id="mediaError" class="text-red-500 text-sm mb-3 hidden"></p>
+
+                    <div id="mediaPreviewContainer" class="flex gap-3 flex-wrap mb-3"></div>
+
+                    <script>
+                        // --- 📸 Drag & Drop for Image + Video ---
+const mediaDropArea = document.getElementById('mediaDropArea');
+const mediaInput = document.getElementById('mediaInput');
+const mediaPreviewContainer = document.getElementById('mediaPreviewContainer');
+const mediaError = document.getElementById('mediaError');
+
+mediaDropArea.addEventListener('click', () => mediaInput.click());
+
+// Handle file input or drag-drop
+mediaInput.addEventListener('change', handleMediaFiles);
+mediaDropArea.addEventListener('dragover', e => e.preventDefault());
+mediaDropArea.addEventListener('drop', e => {
+    e.preventDefault();
+    mediaInput.files = e.dataTransfer.files;
+    handleMediaFiles();
+});
+function handleMediaFiles() {
+    mediaError.classList.add('hidden');
+    const files = Array.from(mediaInput.files);
+    
+    files.forEach(file => {
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm'];
+        if (!validTypes.includes(file.type)) {
+            mediaError.textContent = 'Only JPG, PNG, WEBP images or MP4/WebM videos are allowed.';
+            mediaError.classList.remove('hidden');
+            return;
+        }
+
+        // ✅ Size limit: 5 MB for images, 50 MB for videos
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+        const maxSize = isImage ? 5 * 1024 * 1024 : 50 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+            mediaError.textContent = isImage
+                ? 'Image size must be less than 5 MB.'
+                : 'Video size must be less than 50 MB.';
+            mediaError.classList.remove('hidden');
+            return;
+        }
+
+        const fileURL = URL.createObjectURL(file);
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('relative', 'w-32', 'h-32', 'border', 'rounded', 'overflow-hidden');
+
+        // ❌ remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.innerHTML = '✖';
+        removeBtn.classList.add('absolute', 'top-1', 'right-1', 'bg-black', 'bg-opacity-60', 'text-white', 'rounded-full', 'w-5', 'h-5', 'flex', 'items-center', 'justify-center', 'text-xs', 'hover:bg-red-600');
+        removeBtn.onclick = () => wrapper.remove();
+
+        if (isImage) {
+            const img = document.createElement('img');
+            img.src = fileURL;
+            img.classList.add('w-full', 'h-full', 'object-cover');
+            wrapper.appendChild(img);
+        } else if (isVideo) {
+            const vid = document.createElement('video');
+            vid.src = fileURL;
+            vid.controls = true;
+            vid.classList.add('w-full', 'h-full', 'object-cover');
+            wrapper.appendChild(vid);
+        }
+
+        wrapper.appendChild(removeBtn);
+        mediaPreviewContainer.appendChild(wrapper);
+    });
+}
+
+
+                    </script>
 
 
                     <!-- Video Recording -->
@@ -359,28 +434,28 @@ function changeMedia(src, type){
 }
 
 
-// Quantity Increment-Decrement
-const qtyInput = document.getElementById('quantityInput');
-const selectedQuantity = document.getElementById('selectedQuantity');
-const incBtn = document.getElementById('increaseQty');
-const decBtn = document.getElementById('decreaseQty');
+// // Quantity Increment-Decrement
+// const qtyInput = document.getElementById('quantityInput');
+// const selectedQuantity = document.getElementById('selectedQuantity');
+// const incBtn = document.getElementById('increaseQty');
+// const decBtn = document.getElementById('decreaseQty');
 
-incBtn?.addEventListener('click', () => {
-    let current = parseInt(qtyInput.value);
-    const max = parseInt(qtyInput.max);
-    if (current < max) {
-        qtyInput.value = current + 1;
-        selectedQuantity.value = qtyInput.value;
-    }
-});
+// incBtn?.addEventListener('click', () => {
+//     let current = parseInt(qtyInput.value);
+//     const max = parseInt(qtyInput.max);
+//     if (current < max) {
+//         qtyInput.value = current + 1;
+//         selectedQuantity.value = qtyInput.value;
+//     }
+// });
 
-decBtn?.addEventListener('click', () => {
-    let current = parseInt(qtyInput.value);
-    if (current > 1) {
-        qtyInput.value = current - 1;
-        selectedQuantity.value = qtyInput.value;
-    }
-});
+// decBtn?.addEventListener('click', () => {
+//     let current = parseInt(qtyInput.value);
+//     if (current > 1) {
+//         qtyInput.value = current - 1;
+//         selectedQuantity.value = qtyInput.value;
+//     }
+// });
 
 // Drag & Drop Video Upload
 const dropArea = document.getElementById('dropVideoArea');
