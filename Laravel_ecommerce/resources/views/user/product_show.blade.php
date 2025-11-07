@@ -87,49 +87,94 @@
             </div>
 
             <!-- 🛍️ Buttons -->
-            <div class="mt-8 flex items-center space-x-4">
-                @if($product->stock_qty > 0)
-                
-                    <!-- Quantity Selector -->
-                    <!-- Quantity Selector -->
-                        @php
-                            $cart = session()->get('cart', []);
-                            $currentQty = isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 1;
-                        @endphp
+           <div class="mt-8 space-y-4">
 
-                        <div class="flex items-center mb-4">
-                            <button type="button" id="decreaseQty" class="bg-gray-300 px-3 py-1 rounded-l">-</button>
-                            <input type="number" id="quantityInput" name="quantity" value="{{ $currentQty }}" 
-                                min="1" max="{{ $product->stock_qty }}" 
-                                class="w-16 text-center border-t border-b border-gray-300" readonly>
-                            <button type="button" id="increaseQty" class="bg-gray-300 px-3 py-1 rounded-r">+</button>
-                        </div>
+    @if($product->stock_qty > 0)
+        @php
+            $cart = session()->get('cart', []);
+            $currentQty = isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 1;
+        @endphp
 
-                        <form id="addToCartForm" action="{{ route('cart.add', $product->id) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="quantity" id="selectedQuantity" value="{{ $currentQty }}">
-                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md font-medium transition">
-                                🛒 Add to Cart
-                            </button>
-                        </form>
+        <!-- Quantity Selector -->
+        <div class="flex items-center">
+            <h6 class="mr-3 font-medium text-gray-700">Quantity In Your Cart</h6>
+            <button type="button" id="decreaseQty" class="bg-gray-300 px-3 py-1 rounded-l">-</button>
+            <input type="number" id="quantityInput" name="quantity"
+                value="{{ $currentQty }}" min="1" max="{{ $product->stock_qty }}"
+                class="w-16 text-center border-t border-b border-gray-300" readonly>
+            <button type="button" id="increaseQty" class="bg-gray-300 px-3 py-1 rounded-r">+</button>
+        </div>
 
-                @else
-                    <button class="bg-gray-400 text-white px-5 py-2 rounded-md" disabled>🛒 Out of Stock</button>
-                @endif
+        <!-- Add to Cart -->
+        <form id="addToCartForm" action="{{ route('cart.add', $product->id) }}" method="POST" class="pt-3">
+            @csrf
+            <input type="hidden" name="quantity" id="selectedQuantity" value="{{ $currentQty }}">
+            <button type="submit" id="addToCartBtn"
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md font-medium transition w-full">
+                🛒 Add to Cart
+            </button>
+        </form>
 
-                @auth
-                    <form action="{{ route('wishlist.add', $product->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-md font-medium transition">
-                            💖 Add to Wishlist
-                        </button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-md font-medium transition">
-                        💖 Wishlist
-                    </a>
-                @endauth
-            </div>
+    @else
+        <button class="bg-gray-400 text-white px-5 py-2 rounded-md w-full" disabled>🛒 Out of Stock</button>
+    @endif
+
+    <!-- Wishlist -->
+    @auth
+        <form action="{{ route('wishlist.add', $product->id) }}" method="POST">
+            @csrf
+            <button type="submit"
+                class="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-md font-medium transition w-full">
+                💖 Add to Wishlist
+            </button>
+        </form>
+    @else
+        <a href="{{ route('login') }}"
+            class="block text-center border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-md font-medium transition w-full">
+            💖 Wishlist
+        </a>
+    @endauth
+</div>
+
+<!-- JS: Quantity validation -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const decreaseBtn = document.getElementById("decreaseQty");
+        const increaseBtn = document.getElementById("increaseQty");
+        const quantityInput = document.getElementById("quantityInput");
+        const selectedQuantity = document.getElementById("selectedQuantity");
+        const addToCartBtn = document.getElementById("addToCartBtn");
+        const maxStock = parseInt(quantityInput.max);
+
+        function updateButtonState() {
+            const qty = parseInt(quantityInput.value);
+            addToCartBtn.disabled = qty < 1 || qty > maxStock;
+            addToCartBtn.classList.toggle("opacity-50", addToCartBtn.disabled);
+            addToCartBtn.classList.toggle("cursor-not-allowed", addToCartBtn.disabled);
+        }
+
+        increaseBtn.addEventListener("click", () => {
+            let qty = parseInt(quantityInput.value);
+            if (qty < maxStock) {
+                quantityInput.value = qty + 1;
+                selectedQuantity.value = qty + 1;
+            }
+            updateButtonState();
+        });
+
+        decreaseBtn.addEventListener("click", () => {
+            let qty = parseInt(quantityInput.value);
+            if (qty > 1) {
+                quantityInput.value = qty - 1;
+                selectedQuantity.value = qty - 1;
+            }
+            updateButtonState();
+        });
+
+        updateButtonState();
+    });
+</script>
+
         </div>
     </div>
 
