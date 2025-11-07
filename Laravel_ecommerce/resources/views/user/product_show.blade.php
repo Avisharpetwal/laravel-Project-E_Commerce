@@ -18,6 +18,7 @@
                     </div>
                 </div>
 
+                
                 <div class="flex flex-wrap gap-2">
                     @foreach($product->images as $index => $file)
                         <div class="w-20 h-20 border rounded overflow-hidden cursor-pointer hover:scale-105 transition" onclick="changeMedia('{{ asset('storage/'.$file->path) }}', '{{ $file->type }}')">
