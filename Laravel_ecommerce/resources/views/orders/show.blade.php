@@ -24,7 +24,7 @@
         <p><strong>Notes:</strong> {{ $order->notes ?? '—' }}</p>
         <p><strong>Placed On:</strong> {{ $order->created_at->format('d M Y, h:i A') }}</p>
 
-        {{-- 🟥 Cancel Order Button (only for Pending orders) --}}
+        {{--  Cancel Order Button (only for Pending orders) --}}
         @if($order->status === 'Pending')
             <form action="{{ route('orders.cancel', $order->id) }}" method="POST" 
                   onsubmit="return confirm('Are you sure you want to cancel this order?');" 
@@ -38,7 +38,7 @@
         @endif
     </div>
 
-    {{-- 🛍️ Ordered Items --}}
+    {{--  Ordered Items --}}
     <div class="bg-white shadow-sm rounded-2xl p-4 border">
         <h4 class="text-lg font-semibold mb-3">Items in this Order</h4>
 

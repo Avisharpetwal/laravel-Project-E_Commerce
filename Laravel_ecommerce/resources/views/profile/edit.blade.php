@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            {{-- ✅ Profile Information Form --}}
+            {{--  Profile Information Form --}}
             <div class="p-6 bg-white shadow sm:rounded-lg">
                 <h3 class="text-lg font-semibold mb-4">Profile Information</h3>
                 <form method="POST" action="{{ route('profile.update') }}">
@@ -33,13 +33,13 @@
                 </form>
             </div>
 
-            {{-- ✅ Password Update Form --}}
+            {{--  Password Update Form --}}
             <div class="p-6 bg-white shadow sm:rounded-lg">
                 <h3 class="text-lg font-semibold mb-4">Change Password</h3>
                 @include('profile.partials.update-password-form')
             </div>
 
-            {{-- ✅ Account Delete Form --}}
+            {{--  Account Delete Form --}}
             <div class="p-6 bg-white shadow sm:rounded-lg">
                 @include('profile.partials.delete-user-form')
             </div>

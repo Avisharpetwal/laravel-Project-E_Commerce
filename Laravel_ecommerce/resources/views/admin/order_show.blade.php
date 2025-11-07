@@ -13,7 +13,7 @@
         </div>
 
         <div class="card-body">
-            {{-- ✅ Order Information --}}
+            {{--  Order Information --}}
             <div class="row mb-4">
                 <div class="col-md-6">
                     <h5 class="fw-semibold text-primary mb-3">Customer Info</h5>
@@ -44,7 +44,7 @@
                 </div>
             </div>
 
-            {{-- ✅ Notes --}}
+            {{--  Notes --}}
             @if($order->notes)
                 <div class="alert alert-secondary">
                     <strong>Customer Notes:</strong><br>
@@ -52,7 +52,7 @@
                 </div>
             @endif
 
-            {{-- ✅ Items Table --}}
+            {{--  Items Table --}}
             <h5 class="fw-semibold text-primary mt-4 mb-3">Order Items</h5>
             <div class="table-responsive">
                 <table class="table table-bordered align-middle">
@@ -94,7 +94,7 @@
                 </table>
             </div>
 
-            {{-- ✅ Change Status --}}
+            {{--  Change Status --}}
             <div class="mt-4">
                 <form action="{{ route('admin.update.order.status', $order->id) }}" method="POST" class="d-flex align-items-center gap-2">
                     @csrf

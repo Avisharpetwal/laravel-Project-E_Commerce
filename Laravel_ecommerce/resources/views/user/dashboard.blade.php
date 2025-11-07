@@ -48,7 +48,7 @@
                         @endforeach
                     </ul>
 
-                    {{-- 💰 Price Filter --}}
+                    {{--  Price Filter --}}
                     <form action="{{ route('products.list') }}" method="GET">
                         @if (request('category'))
                             <input type="hidden" name="category" value="{{ request('category') }}">
@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        {{-- 🛒 Product Grid --}}
+        {{--  Product Grid --}}
         <div class="col-md-9">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="fw-bold mb-0">
@@ -81,7 +81,7 @@
                     @endif
                 </h4>
 
-                {{-- 🔍 Search --}}
+                {{--  Search --}}
                 <form method="GET" class="d-flex align-items-center">
                     @if (request('category'))
                         <input type="hidden" name="category" value="{{ request('category') }}">

@@ -41,7 +41,7 @@
                 <h2 class="text-2xl font-bold mb-2">{{ $product->title }}</h2>
                 <p class="text-gray-600 mb-4">{{ $product->description }}</p>
 
-                <!-- ⭐ Average Rating -->
+                <!--  Average Rating -->
                 <div class="mb-3">
                     @php
                         $avgRating = round($product->reviews->avg('rating'), 1);
@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <!-- 💰 Price -->
+                <!--  Price -->
                 @if ($product->discount > 0)
                     <h3 class="text-red-600 text-2xl font-semibold mb-1">
                         ₹{{ $product->price - ($product->price * $product->discount / 100) }}
@@ -67,7 +67,7 @@
                     <h3 class="text-2xl font-semibold mb-3">₹{{ $product->price }}</h3>
                 @endif
 
-                <!-- 📦 Stock Info -->
+                <!--  Stock Info -->
                 <div class="mt-4">
                     @if($product->stock_qty < 1)
                         <p class="text-red-500 font-medium">Out of Stock</p>
@@ -87,7 +87,7 @@
                 @endif
             </div>
 
-            <!-- 🛍️ Buttons -->
+            <!--  Buttons -->
            <div class="mt-8 space-y-4">
 
     @if($product->stock_qty > 0)
@@ -179,7 +179,7 @@
         </div>
     </div>
 
-    <!-- 📝 Reviews Section -->
+    <!--  Reviews Section -->
     <div  id="reviewSection" class="mt-10 border-t pt-6">
         <h3 class="text-xl font-bold mb-4">Customer Reviews</h3>
         @if($product->reviews->count())
@@ -249,7 +249,7 @@
                     <div id="mediaPreviewContainer" class="flex gap-3 flex-wrap mb-3"></div>
 
                     <script>
-                        // --- 📸 Drag & Drop for Image + Video ---
+                        // ---  Drag & Drop for Image + Video ---
 const mediaDropArea = document.getElementById('mediaDropArea');
 const mediaInput = document.getElementById('mediaInput');
 const mediaPreviewContainer = document.getElementById('mediaPreviewContainer');
@@ -277,7 +277,7 @@ function handleMediaFiles() {
             return;
         }
 
-        // ✅ Size limit: 5 MB for images, 50 MB for videos
+        //  Size limit: 5 MB for images, 50 MB for videos
         const isImage = file.type.startsWith('image/');
         const isVideo = file.type.startsWith('video/');
         const maxSize = isImage ? 5 * 1024 * 1024 : 50 * 1024 * 1024;
@@ -294,7 +294,7 @@ function handleMediaFiles() {
         const wrapper = document.createElement('div');
         wrapper.classList.add('relative', 'w-32', 'h-32', 'border', 'rounded', 'overflow-hidden');
 
-        // ❌ remove button
+        //  remove button
         const removeBtn = document.createElement('button');
         removeBtn.innerHTML = '✖';
         removeBtn.classList.add('absolute', 'top-1', 'right-1', 'bg-black', 'bg-opacity-60', 'text-white', 'rounded-full', 'w-5', 'h-5', 'flex', 'items-center', 'justify-center', 'text-xs', 'hover:bg-red-600');

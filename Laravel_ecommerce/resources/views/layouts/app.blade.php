@@ -15,15 +15,15 @@
 
 <body class="bg-gray-50 text-gray-800">
 
-    {{-- ✅ Navbar --}}
+    {{--  Navbar --}}
     @include('layouts.navigation')
 
-    {{-- ✅ Page Content --}}
+    {{--  Page Content --}}
     <main class="p-6 min-h-screen">
         @yield('content')
     </main>
 
-    {{-- ✅ Footer (optional future use ke liye) --}}
+    {{--  Footer (optional future use ke liye) --}}
     <footer class="bg-black text-white text-center py-3">
         <p class="mb-0 text-sm">&copy; {{ date('Y') }} Laravel eCommerce — All Rights Reserved.</p>
     </footer>

@@ -25,7 +25,7 @@
                         <br>
                         <a href="{{ route('orders.show', $order->id) }}" class="btn btn-primary btn-sm mt-2">View Details</a>
 
-                        <!-- ✅ Add Review Buttons for each product -->
+                        <!--  Add Review Buttons for each product -->
                           @if($order->status === 'Delivered')
                         @if($order->orderItems && $order->orderItems->count())
                             @foreach($order->orderItems as $item)

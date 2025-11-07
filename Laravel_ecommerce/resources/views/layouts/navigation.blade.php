@@ -5,9 +5,9 @@
 
     <div class="flex items-center space-x-4">
         @auth
-            {{-- 🧩 Check User Role --}}
+            {{--  Check User Role --}}
             @if(Auth::user()->role === 'admin')
-                {{-- 🔹 Admin Navbar --}}
+                {{--  Admin Navbar --}}
                 <a href="{{ route('admin.dashboard') }}" class="hover:text-gray-300">Dashboard</a>
                 <a href="{{ route('profile.show') }}" class="hover:text-gray-300">Profile</a>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
@@ -16,11 +16,11 @@
                 </form>
 
             @else
-                {{-- 🔹 Normal User Navbar --}}
+                {{--  Normal User Navbar --}}
                 <a href="{{ route('user.dashboard') }}" class="hover:text-gray-300">Home</a>
                 <a href="{{ route('profile.show') }}" class="hover:text-gray-300">Profile</a>
 
-                {{-- 🛒 Cart --}}
+                {{--  Cart --}}
                 <a href="{{ route('cart.index') }}" class="relative hover:text-gray-300">
                     🛒 Cart
                     @if(session('cart') && count(session('cart')) > 0)
@@ -30,12 +30,12 @@
                     @endif
                 </a>
 
-                {{-- 🧾 My Orders --}}
+                {{--  My Orders --}}
                <a href="{{ route('orders.index') }}" class="hover:text-gray-300">
                        📦 My Orders
                  </a>
 
-                {{-- ❤️ Wishlist --}}
+                {{--  Wishlist --}}
                 <a href="{{ route('wishlist.index') }}" class="relative hover:text-gray-300">
                     ❤️ Wishlist
                     @php
@@ -48,7 +48,7 @@
                     @endif
                 </a>
 
-                {{-- 🔴 Logout --}}
+                {{--  Logout --}}
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
                     <button type="submit" class="text-red-400 hover:text-red-600">Logout</button>
@@ -56,7 +56,7 @@
 
             @endif
         @else
-            {{-- 🔹 Guest Navbar --}}
+            {{--  Guest Navbar --}}
             <a href="{{ route('login') }}" class="text-white hover:text-gray-300">Login</a>
             <a href="{{ route('register') }}" class="text-white hover:text-gray-300">Register</a>
         @endauth
