@@ -190,6 +190,17 @@
                     <input type="file" name="images[]" accept="image/*" id="imageInput" class="mb-3" multiple>
                     <div id="imagePreviewContainer" class="flex gap-2 flex-wrap mb-3"></div>
 
+                    
+                    <!-- Drag & Drop + Image/Video Upload -->
+                   <label class="block mb-2 font-medium">Upload Video:</label>
+                   <input type="file" name="video" id="dropVideoInput" accept="video/mp4,video/webm" class="hidden">
+                   <div id="dropVideoArea" class="border border-dashed border-gray-400 rounded p-4 text-center cursor-pointer mb-2">
+                    Drag & Drop your video here or click to upload
+                    </div>
+                    <p id="videoError" class="text-red-500 text-sm mb-3 hidden"></p>
+                    <video id="videoPreview" class="w-60 rounded border mb-2" controls></video>
+
+
                     <!-- Video Recording -->
                     <label class="block mb-2 font-medium">Record Video Review:</label>
                     <video id="preview" class="w-60 rounded border mb-2" autoplay muted></video>
@@ -202,7 +213,7 @@
                     <button type="submit" class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
                         Submit Review
                     </button>
-                </form>
+                </form> 
             </div>
         @else
             <p class="mt-4 text-gray-500">
@@ -324,5 +335,52 @@ decBtn?.addEventListener('click', () => {
         selectedQuantity.value = qtyInput.value;
     }
 });
+
+// Drag & Drop Video Upload
+const dropArea = document.getElementById('dropVideoArea');
+const dropInput = document.getElementById('dropVideoInput');
+const videoPreview = document.getElementById('videoPreview');
+const videoError = document.getElementById('videoError');
+
+dropArea.addEventListener('click', () => dropInput.click());
+
+// Handle file selection
+dropInput.addEventListener('change', handleVideoFile);
+dropArea.addEventListener('dragover', e => e.preventDefault());
+dropArea.addEventListener('drop', e => {
+    e.preventDefault();
+    dropInput.files = e.dataTransfer.files;
+    handleVideoFile();
+});
+
+function handleVideoFile() {
+    videoError.classList.add('hidden');
+    videoPreview.src = '';
+
+    const file = dropInput.files[0];
+    if (!file) return;
+
+    // Check type
+    if (!['video/mp4', 'video/webm'].includes(file.type)) {
+        videoError.textContent = 'Only MP4 or WebM videos are allowed.';
+        videoError.classList.remove('hidden');
+        dropInput.value = '';
+        return;
+    }
+
+    // Check size (50 MB)
+    const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+    if (file.size > maxSize) {
+        videoError.textContent = 'Video size must be less than 50 MB.';
+        videoError.classList.remove('hidden');
+        dropInput.value = '';
+        return;
+    }
+
+    // Preview
+    const url = URL.createObjectURL(file);
+    videoPreview.src = url;
+}
+
 </script>
 @endsection

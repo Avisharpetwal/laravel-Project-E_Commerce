@@ -9,51 +9,102 @@ use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
 {
+    // public function store(Request $request, Product $product)
+    // {
+    //     $request->validate([
+    //         'rating' => 'required|integer|min:1|max:5',
+    //         'comment' => 'nullable|string|max:2000',
+    //         'images.*' => 'nullable|image|max:5120', // 5MB each
+    //         'video' => 'nullable|file|mimetypes:video/webm,video/mp4|max:51200', // up to 50MB
+    //     ]);
+
+    //     // Video  (WebRTC)
+    //     $videoPath = null;
+    //     if ($request->video_data) {
+    //         $videoData = base64_decode(preg_replace('#^data:video/\w+;base64,#i', '', $request->video_data));
+    //         $videoName = 'review_' . time() . '.webm';
+    //         file_put_contents(storage_path('app/public/reviews/videos/'.$videoName), $videoData);
+    //         $videoPath = 'reviews/videos/'.$videoName;
+    //     }
+
+    //     // Create review
+    //     $review = Review::create([
+    //         'product_id' => $product->id,
+    //         'user_id' => auth()->id(),
+    //         'rating' => $request->rating,
+    //         'comment' => $request->comment,
+    //         'video_path' => $videoPath,
+    //         'approved' => true,
+    //     ]);
+
+    //     // Images
+    //     if ($request->hasFile('images')) {
+    //         foreach ($request->file('images') as $img) {
+    //             $path = $img->store('reviews/images', 'public');
+    //             $review->images()->create(['path' => $path]);
+    //         }
+    //     }
+
+    //     // Video from uploaded file (optional)
+    //     if ($request->hasFile('video')) {
+    //         $path = $request->file('video')->store('reviews/videos', 'public');
+    //         $review->video_path = $path;
+    //         $review->save();
+    //     }
+
+    //     return back()->with('success', 'Thanks — your review was posted!');
+    // }
+
+
     public function store(Request $request, Product $product)
-    {
-        $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:2000',
-            'images.*' => 'nullable|image|max:5120', // 5MB each
-            'video' => 'nullable|file|mimetypes:video/webm,video/mp4|max:51200', // up to 50MB
-        ]);
+{
+    $request->validate([
+        'rating' => 'required|integer|min:1|max:5',
+        'comment' => 'nullable|string|max:2000',
+        'images.*' => 'nullable|image|max:5120', // 5MB each
+        'video' => 'nullable|file|mimetypes:video/webm,video/mp4|max:51200', // drag & drop video
+        'video_data' => 'nullable|string', // WebRTC recording
+    ]);
 
-        // Video  (WebRTC)
-        $videoPath = null;
-        if ($request->video_data) {
-            $videoData = base64_decode(preg_replace('#^data:video/\w+;base64,#i', '', $request->video_data));
-            $videoName = 'review_' . time() . '.webm';
-            file_put_contents(storage_path('app/public/reviews/videos/'.$videoName), $videoData);
-            $videoPath = 'reviews/videos/'.$videoName;
-        }
+    $videoPath = null;
 
-        // Create review
-        $review = Review::create([
-            'product_id' => $product->id,
-            'user_id' => auth()->id(),
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-            'video_path' => $videoPath,
-            'approved' => true,
-        ]);
-
-        // Images
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $img) {
-                $path = $img->store('reviews/images', 'public');
-                $review->images()->create(['path' => $path]);
-            }
-        }
-
-        // Video from uploaded file (optional)
-        if ($request->hasFile('video')) {
-            $path = $request->file('video')->store('reviews/videos', 'public');
-            $review->video_path = $path;
-            $review->save();
-        }
-
-        return back()->with('success', 'Thanks — your review was posted!');
+    //  WebRTC video
+    if ($request->filled('video_data')) {
+        $videoData = base64_decode(preg_replace('#^data:video/\w+;base64,#i', '', $request->video_data));
+        $videoName = 'review_' . time() . '.webm';
+        $videoFullPath = storage_path('app/public/reviews/videos/'.$videoName);
+        file_put_contents($videoFullPath, $videoData);
+        $videoPath = 'reviews/videos/'.$videoName;
     }
+
+    //  Create review
+    $review = Review::create([
+        'product_id' => $product->id,
+        'user_id' => auth()->id(),
+        'rating' => $request->rating,
+        'comment' => $request->comment,
+        'video_path' => $videoPath,
+        'approved' => true,
+    ]);
+
+    //  Images
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $img) {
+            $path = $img->store('reviews/images', 'public');
+            $review->images()->create(['path' => $path]);
+        }
+    }
+
+    //  Drag & drop / uploaded video file
+    if ($request->hasFile('video')) {
+        $path = $request->file('video')->store('reviews/videos', 'public');
+        $review->video_path = $path;
+        $review->save();
+    }
+
+    return back()->with('success', 'Thanks — your review was posted!');
+}
+
 
     public function uploadVideo(Request $request, Product $product)
     {
