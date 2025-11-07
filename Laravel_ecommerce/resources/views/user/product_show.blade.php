@@ -5,40 +5,32 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         
         <!-- LEFT: Product Images -->
-        <div>
+         <div>
             @if($product->images->count())
                 <div class="mb-4">
-                    <img id="mainImage"
-                        src="{{ asset('storage/'.$product->images->first()->path) }}"
-                        class="w-full h-96 object-cover rounded-lg shadow-md border"
-                        alt="Main Product Image">
+                    <div id="mainMedia">
+                        @php $first = $product->images->first(); @endphp
+                        @if($first->type === 'video')
+                            <video src="{{ asset('storage/'.$first->path) }}" class="w-full h-96 object-cover rounded-lg shadow-md border" controls></video>
+                        @else
+                            <img src="{{ asset('storage/'.$first->path) }}" class="w-full h-96 object-cover rounded-lg shadow-md border" alt="Main Product Image">
+                        @endif
+                    </div>
                 </div>
 
                 <div class="flex flex-wrap gap-2">
-                    @foreach($product->images as $index => $img)
-                        <img src="{{ asset('storage/'.$img->path) }}"
-                            class="w-20 h-20 object-cover rounded cursor-pointer border hover:scale-105 transition"
-                            onclick="changeImage('{{ asset('storage/'.$img->path) }}')"
-                            data-bs-toggle="modal" data-bs-target="#imageModal{{ $index }}"
-                            alt="Thumbnail">
-
-                        <!-- Modal for zoom -->
-                        <div class="modal fade" id="imageModal{{ $index }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                <div class="modal-content bg-black border-0">
-                                    <div class="modal-body text-center p-0">
-                                        <img src="{{ asset('storage/'.$img->path) }}" class="img-fluid rounded">
-                                    </div>
-                                    <div class="modal-footer border-0 justify-content-center">
-                                        <button class="btn btn-light btn-sm" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
+                    @foreach($product->images as $index => $file)
+                        <div class="w-20 h-20 border rounded overflow-hidden cursor-pointer hover:scale-105 transition" onclick="changeMedia('{{ asset('storage/'.$file->path) }}', '{{ $file->type }}')">
+                            @if($file->type === 'video')
+                                <video src="{{ asset('storage/'.$file->path) }}" class="w-full h-full object-cover" muted></video>
+                            @else
+                                <img src="{{ asset('storage/'.$file->path) }}" class="w-full h-full object-cover">
+                            @endif
                         </div>
                     @endforeach
                 </div>
             @else
-                <p class="text-gray-500">No images available for this product.</p>
+                <p class="text-gray-500">No images or videos available for this product.</p>
             @endif
         </div>
 
@@ -284,6 +276,31 @@ stopBtn?.addEventListener('click', () => {
     startBtn.disabled = false;
     stopBtn.disabled = true;
 });
+
+function changeMedia(src, type){
+    const main = document.getElementById('mainMedia');
+    main.innerHTML = '';
+    if(type === 'video'){
+        const vid = document.createElement('video');
+        vid.src = src;
+        vid.controls = true;
+        vid.autoplay = true;
+        vid.style.width = '100%';
+        vid.style.height = '24rem';
+        vid.style.objectFit = 'cover';
+        vid.classList.add('rounded-lg', 'shadow-md', 'border');
+        main.appendChild(vid);
+    } else {
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.width = '100%';
+        img.style.height = '24rem';
+        img.style.objectFit = 'cover';
+        img.classList.add('rounded-lg', 'shadow-md', 'border');
+        main.appendChild(img);
+    }
+}
+
 
 // Quantity Increment-Decrement
 const qtyInput = document.getElementById('quantityInput');
