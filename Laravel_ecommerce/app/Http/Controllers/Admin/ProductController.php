@@ -202,6 +202,36 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('success','Product updated.');
     }
 
+
+    public function destroy(Product $product)
+{
+    // Delete associated images
+    foreach ($product->images as $image) {
+        if (Storage::disk('public')->exists($image->path)) {
+            Storage::disk('public')->delete($image->path);
+        }
+        $image->delete();
+    }
+
+    // Delete associated media/videos
+    if ($product->media) {
+        foreach ($product->media as $media) {
+            if (Storage::disk('public')->exists($media->path)) {
+                Storage::disk('public')->delete($media->path);
+            }
+            $media->delete();
+        }
+    }
+
+    // Delete associated variants
+    $product->variants()->delete();
+
+    // Delete the product itself
+    $product->delete();
+
+    return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
+}
+
  public function Userdashboard(Request $request)
 {
     $query = Product::with(['images', 'category', 'subcategory']);
@@ -237,6 +267,7 @@ class ProductController extends Controller
 
     return view('user.dashboard', compact('products', 'categories'));
 }
+
 
 
 
