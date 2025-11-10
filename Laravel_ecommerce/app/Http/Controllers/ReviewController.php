@@ -61,23 +61,20 @@ class ReviewController extends Controller
     $request->validate([
         'rating' => 'required|integer|min:1|max:5',
         'comment' => 'nullable|string|max:2000',
-        'images.*' => 'nullable|image|max:5120', // 5MB each
-        'video' => 'nullable|file|mimetypes:video/webm,video/mp4|max:51200', // drag & drop video
-        'video_data' => 'nullable|string', // WebRTC recording
+        'media_files.*' => 'nullable|file|mimetypes:image/jpeg,image/png,image/webp,video/mp4,video/webm|max:51200',
+        'video_data' => 'nullable|string',
     ]);
 
     $videoPath = null;
 
-    //  WebRTC video
+    // WebRTC video
     if ($request->filled('video_data')) {
         $videoData = base64_decode(preg_replace('#^data:video/\w+;base64,#i', '', $request->video_data));
         $videoName = 'review_' . time() . '.webm';
-        $videoFullPath = storage_path('app/public/reviews/videos/'.$videoName);
-        file_put_contents($videoFullPath, $videoData);
+        file_put_contents(storage_path('app/public/reviews/videos/'.$videoName), $videoData);
         $videoPath = 'reviews/videos/'.$videoName;
     }
 
-    //  Create review
     $review = Review::create([
         'product_id' => $product->id,
         'user_id' => auth()->id(),
@@ -87,23 +84,23 @@ class ReviewController extends Controller
         'approved' => true,
     ]);
 
-    //  Images
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $img) {
-            $path = $img->store('reviews/images', 'public');
-            $review->images()->create(['path' => $path]);
-        }
-    }
+    // Drag & Drop images/videos
+    if ($request->hasFile('media_files')) {
+        foreach ($request->file('media_files') as $file) {
+            $type = str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'video';
+            $path = $file->store($type==='image' ? 'reviews/images':'reviews/videos','public');
 
-    //  Drag & drop / uploaded video file
-    if ($request->hasFile('video')) {
-        $path = $request->file('video')->store('reviews/videos', 'public');
-        $review->video_path = $path;
-        $review->save();
+            if ($type === 'image') {
+                $review->images()->create(['path' => $path]);
+            } else {
+                $review->media_files()->create(['path'=>$path,'type'=>'video']);
+            }
+        }
     }
 
     return back()->with('success', 'Thanks — your review was posted!');
 }
+
 
 
     public function uploadVideo(Request $request, Product $product)

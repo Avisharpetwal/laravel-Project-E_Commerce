@@ -180,36 +180,57 @@
     </div>
 
     <!--  Reviews Section -->
-    <div  id="reviewSection" class="mt-10 border-t pt-6">
-        <h3 class="text-xl font-bold mb-4">Customer Reviews</h3>
-        @if($product->reviews->count())
-            @foreach($product->reviews as $review)
-                <div class="border-b pb-3 mb-3">
-                    <div class="flex items-center mb-1">
-                        <strong>{{ $review->user->name }}</strong>
-                        <span class="ml-3 text-sm text-gray-500">{{ $review->created_at->diffForHumans() }}</span>
-                    </div>
-                    <div>
-                        @for($i=1;$i<=5;$i++)
-                            <i class="bi {{ $i <= $review->rating ? 'bi-star-fill text-yellow-400' : 'bi-star text-gray-300' }}"></i>
-                        @endfor
-                    </div>
-                    <p class="mt-2 text-gray-700">{{ $review->comment }}</p>
-                    @if($review->images->count())
-                        <div class="flex gap-2 mt-2 flex-wrap">
-                            @foreach($review->images as $img)
-                                <img src="{{ asset('storage/'.$img->path) }}" class="w-40 rounded">
-                            @endforeach
-                        </div>
-                    @endif
-                    @if($review->video_path)
-                        <video src="{{ asset('storage/'.$review->video_path) }}" controls class="w-60 mt-2 rounded"></video>
-                    @endif
+<div id="reviewSection" class="mt-10 border-t pt-6">
+    <h3 class="text-xl font-bold mb-4">Customer Reviews</h3>
+    @if($product->reviews->count())
+        @foreach($product->reviews as $review)
+            <div class="border-b pb-3 mb-3">
+                <div class="flex items-center mb-1">
+                    <strong>{{ $review->user->name }}</strong>
+                    <span class="ml-3 text-sm text-gray-500">{{ $review->created_at->diffForHumans() }}</span>
                 </div>
-            @endforeach
-        @else
-            <p class="text-gray-500">No reviews yet. Be the first to review this product!</p>
-        @endif
+                <div>
+                    @for($i=1;$i<=5;$i++)
+                        <i class="bi {{ $i <= $review->rating ? 'bi-star-fill text-yellow-400' : 'bi-star text-gray-300' }}"></i>
+                    @endfor
+                </div>
+                <p class="mt-2 text-gray-700">{{ $review->comment }}</p>
+
+                <!-- Images -->
+                @if($review->images->count())
+                    <div class="flex gap-2 mt-2 flex-wrap">
+                        @foreach($review->images as $img)
+                            <img src="{{ asset('storage/'.$img->path) }}" class="w-40 rounded">
+                        @endforeach
+                    </div>
+                @endif
+
+                <!-- WebRTC Video -->
+                @if($review->video_path)
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">Recorded Video:</p>
+                        <video src="{{ asset('storage/'.$review->video_path) }}" controls class="w-60 mt-1 rounded"></video>
+                    </div>
+                @endif
+
+                <!-- Drag & Drop Uploaded Videos -->
+                @if($review->media_files->count())
+                    @foreach($review->media_files as $media)
+                        @if($media->type === 'video')
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">Uploaded Video:</p>
+                                <video src="{{ asset('storage/'.$media->path) }}" controls class="w-60 mt-1 rounded"></video>
+                            </div>
+                        @endif
+                    @endforeach
+                @endif
+            </div>
+        @endforeach
+    @else
+        <p class="text-gray-500">No reviews yet. Be the first to review this product!</p>
+    @endif
+</div>
+
 
         <!-- Add Review Form -->
         @auth
