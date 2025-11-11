@@ -14,14 +14,14 @@ class VerifyEmailControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_verifies_the_user_email_successfully()
+    
+    public function test_it_verifies_the_user_email_successfully()
     {
         Event::fake();
 
         $user = User::factory()->unverified()->create();
 
-        // Signed verification URL
+       
         $url = URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(60),
@@ -36,8 +36,8 @@ class VerifyEmailControllerTest extends TestCase
         Event::assertDispatched(Verified::class);
     }
 
-    /** @test */
-    public function it_redirects_if_email_already_verified()
+    
+    public function test_it_redirects_if_email_already_verified()
     {
         $user = User::factory()->create(['email_verified_at' => now()]);
 
@@ -52,8 +52,8 @@ class VerifyEmailControllerTest extends TestCase
         $response->assertRedirect(route('dashboard', absolute: false) . '?verified=1');
     }
 
-    /** @test */
-    public function it_fails_if_signature_is_invalid()
+    
+    public function test_it_fails_if_signature_is_invalid()
     {
         $user = User::factory()->unverified()->create();
 

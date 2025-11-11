@@ -37,7 +37,7 @@ class ReviewControllerTest extends TestCase
         $response = $this->actingAs($this->user)
                          ->post(route('reviews.store', $this->product->id), $reviewData);
 
-        $response->assertStatus(302); // redirect back
+        $response->assertStatus(302); 
         $response->assertSessionHas('success', 'Thanks — your review was posted!');
 
         $this->assertDatabaseHas('reviews', [
@@ -66,7 +66,7 @@ class ReviewControllerTest extends TestCase
         Storage::disk('public')->assertExists($response->json('path'));
     }
 
-    /** @test */
+    
     public function test_review_submission_can_include_media_files()
     {
         Storage::fake('public');
