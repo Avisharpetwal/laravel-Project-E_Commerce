@@ -66,31 +66,31 @@ class ReviewControllerTest extends TestCase
         Storage::disk('public')->assertExists($response->json('path'));
     }
 
-    // /** @test */
-    // public function test_review_submission_can_include_media_files()
-    // {
-    //     Storage::fake('public');
+    /** @test */
+    public function test_review_submission_can_include_media_files()
+    {
+        Storage::fake('public');
 
-    //     $image = UploadedFile::fake()->image('review_image.jpg');
-    //     $video = UploadedFile::fake()->create('review_video.mp4', 1000, 'video/mp4');
+        $image = UploadedFile::fake()->image('review_image.jpg');
+        $video = UploadedFile::fake()->create('review_video.mp4', 1000, 'video/mp4');
 
-    //     $reviewData = [
-    //         'rating' => 4,
-    //         'comment' => 'Nice product!',
-    //         'media_files' => [$image, $video],
-    //     ];
+        $reviewData = [
+            'rating' => 4,
+            'comment' => 'Nice product!',
+            'media_files' => [$image, $video],
+        ];
 
-    //     $response = $this->actingAs($this->user)
-    //                      ->post(route('reviews.store', $this->product->id), $reviewData);
+        $response = $this->actingAs($this->user)
+                         ->post(route('reviews.store', $this->product->id), $reviewData);
 
-    //     $response->assertStatus(302);
-    //     $response->assertSessionHas('success', 'Thanks — your review was posted!');
+        $response->assertStatus(302);
+        $response->assertSessionHas('success', 'Thanks — your review was posted!');
 
-    //     $review = Review::first();
-    //     $this->assertNotNull($review);
+        $review = Review::first();
+        $this->assertNotNull($review);
 
-    //     // Check that image and video paths are saved
-    //     Storage::disk('public')->assertExists($review->images()->first()->path);
-    //     Storage::disk('public')->assertExists($review->media_files()->first()->path);
-    // }
+        // Check that image and video paths are saved
+        Storage::disk('public')->assertExists($review->images()->first()->path);
+        Storage::disk('public')->assertExists($review->media_files()->first()->path);
+    }
 }
