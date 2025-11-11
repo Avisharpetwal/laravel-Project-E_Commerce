@@ -29,8 +29,8 @@ class AdminOrderControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function admin_can_view_orders_list()
+    
+    public function test_admin_can_view_orders_list()
     {
         // Create some orders
         $orders = Order::factory()->count(3)->create();
@@ -43,8 +43,8 @@ class AdminOrderControllerTest extends TestCase
         $response->assertViewHas('orders');
     }
 
-    /** @test */
-    public function admin_can_view_single_order()
+    
+    public function test_admin_can_view_single_order()
     {
         $order = Order::factory()->create();
 
@@ -56,8 +56,8 @@ class AdminOrderControllerTest extends TestCase
         $response->assertViewHas('order');
     }
 
-    /** @test */
-    public function admin_can_update_order_status()
+    
+    public function test_admin_can_update_order_status()
     {
         $order = Order::factory()->create([
             'status' => 'Pending',
@@ -73,8 +73,8 @@ class AdminOrderControllerTest extends TestCase
         $this->assertEquals('Shipped', $order->fresh()->status);
     }
 
-    /** @test */
-    public function non_admin_cannot_access_admin_order_routes()
+    
+    public function test_non_admin_cannot_access_admin_order_routes()
     {
         $order = Order::factory()->create();
 

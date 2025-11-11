@@ -12,8 +12,8 @@ class OrderTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_has_fillable_attributes()
+    
+    public function test_it_has_fillable_attributes()
     {
         $order = new Order();
 
@@ -22,8 +22,8 @@ class OrderTest extends TestCase
         ], $order->getFillable());
     }
 
-    /** @test */
-    public function it_belongs_to_a_user()
+    
+    public function test_it_belongs_to_a_user()
     {
         $user = User::factory()->create();
         $order = Order::factory()->create(['user_id' => $user->id]);
@@ -32,8 +32,8 @@ class OrderTest extends TestCase
         $this->assertEquals($user->id, $order->user->id);
     }
 
-    /** @test */
-    public function it_has_many_order_items()
+   
+    public function test_it_has_many_order_items()
     {
         $order = Order::factory()->create();
         $items = OrderItem::factory()->count(3)->create(['order_id' => $order->id]);
@@ -42,8 +42,8 @@ class OrderTest extends TestCase
         $this->assertCount(3, $order->items);
     }
 
-    /** @test */
-    public function order_items_and_items_relations_are_same()
+    
+    public function test_order_items_and_items_relations_are_same()
     {
         $order = Order::factory()->create();
         OrderItem::factory()->create(['order_id' => $order->id]);
@@ -51,8 +51,8 @@ class OrderTest extends TestCase
         $this->assertEquals($order->items->count(), $order->orderItems->count());
     }
 
-    /** @test */
-    public function it_returns_orders_index_view_from_index_method()
+    
+    public function test_it_returns_orders_index_view_from_index_method()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
