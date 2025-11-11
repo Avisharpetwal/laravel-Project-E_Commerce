@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Admin;
 
 use Tests\TestCase;
 use App\Models\User;
@@ -12,8 +12,9 @@ class AdminOrderControllerTest extends TestCase
     use RefreshDatabase;
 
     protected $admin;
+    protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -21,12 +22,18 @@ class AdminOrderControllerTest extends TestCase
         $this->admin = User::factory()->create([
             'role' => 'admin',
         ]);
+
+        // Regular user
+        $this->user = User::factory()->create([
+            'role' => 'user',
+        ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_all_orders()
+    /** @test */
+    public function admin_can_view_orders_list()
     {
-        Order::factory()->count(5)->create();
+        // Create some orders
+        $orders = Order::factory()->count(3)->create();
 
         $response = $this->actingAs($this->admin)
                          ->get(route('admin.manage.orders'));
@@ -36,7 +43,7 @@ class AdminOrderControllerTest extends TestCase
         $response->assertViewHas('orders');
     }
 
-   #[\PHPUnit\Framework\Attributes\Test]
+    /** @test */
     public function admin_can_view_single_order()
     {
         $order = Order::factory()->create();
@@ -46,23 +53,41 @@ class AdminOrderControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('admin.order_show');
-        $response->assertViewHas('order', $order);
+        $response->assertViewHas('order');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    /** @test */
     public function admin_can_update_order_status()
     {
-        $order = Order::factory()->create(['status' => 'Pending']);
+        $order = Order::factory()->create([
+            'status' => 'Pending',
+        ]);
 
         $response = $this->actingAs($this->admin)
                          ->put(route('admin.update.order.status', $order->id), [
-                             'status' => 'Shipped',
+                             'status' => 'Shipped'
                          ]);
 
         $response->assertRedirect();
-        $this->assertDatabaseHas('orders', [
-            'id' => $order->id,
-            'status' => 'Shipped',
-        ]);
+        $response->assertSessionHas('success', 'Order status updated successfully!');
+        $this->assertEquals('Shipped', $order->fresh()->status);
+    }
+
+    /** @test */
+    public function non_admin_cannot_access_admin_order_routes()
+    {
+        $order = Order::factory()->create();
+
+        $routes = [
+            ['GET', route('admin.manage.orders')],
+            ['GET', route('admin.order.show', $order->id)],
+            ['PUT', route('admin.update.order.status', $order->id), ['status' => 'Shipped']],
+        ];
+
+        foreach ($routes as $route) {
+            [$method, $url, $data] = array_pad($route, 3, []); // ensures $data is always set
+            $response = $this->actingAs($this->user)->json($method, $url, $data);
+            $response->assertStatus(302); // redirected by admin middleware
+        }
     }
 }

@@ -87,9 +87,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     Route::get('/admin/manage-orders', [App\Http\Controllers\Admin\AdminController::class, 'manageOrders'])->name('admin.manage.orders');
     Route::put('/admin/orders/{id}/update', [App\Http\Controllers\Admin\AdminController::class, 'updateOrderStatus'])->name('admin.update.order.status');
-    Route::get('/manage-orders', [OrderController::class, 'adminIndex'])->name('admin.manage.orders');
+    // Route::get('/manage-orders', [OrderController::class, 'adminIndex'])->name('admin.manage.orders');
     Route::get('/manage-orders/{id}', [OrderController::class, 'adminShow'])->name('admin.order.show');
-    Route::put('/manage-orders/{id}/update-status', [OrderController::class, 'adminUpdateStatus'])->name('admin.update.order.status');
+    // Route::put('/manage-orders/{id}/update-status', [OrderController::class, 'adminUpdateStatus'])->name('admin.update.order.status');
     Route::get('/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
     Route::get('/coupons/create', [CouponController::class, 'create'])->name('admin.coupons.create');
     Route::post('/coupons', [CouponController::class, 'store'])->name('admin.coupons.store');

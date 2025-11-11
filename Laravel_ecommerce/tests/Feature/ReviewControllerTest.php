@@ -26,7 +26,7 @@ class ReviewControllerTest extends TestCase
         $this->product = Product::factory()->create();
     }
 
-    /** @test */
+    
     public function test_authenticated_user_can_submit_review_with_rating_and_comment()
     {
         $reviewData = [
@@ -48,7 +48,7 @@ class ReviewControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function test_authenticated_user_can_upload_video_for_review()
     {
         Storage::fake('public');

@@ -24,8 +24,8 @@ class AdminProductControllerTest extends TestCase
         ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_products_index()
+    
+    public function test_admin_can_view_products_index()
     {
         $response = $this->actingAs($this->admin)
                          ->get(route('admin.products.index'));
@@ -34,8 +34,8 @@ class AdminProductControllerTest extends TestCase
         $response->assertViewIs('admin.products.index');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_create_product_form()
+    
+    public function test_admin_can_view_create_product_form()
     {
         $response = $this->actingAs($this->admin)
                          ->get(route('admin.products.create'));
@@ -44,8 +44,8 @@ class AdminProductControllerTest extends TestCase
         $response->assertViewIs('admin.products.create');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_store_a_product()
+    
+    public function test_admin_can_store_a_product()
     {
         $category = Category::factory()->create();
 
@@ -64,8 +64,8 @@ class AdminProductControllerTest extends TestCase
         $this->assertDatabaseHas('products', ['title' => 'Test Product']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_edit_product_form()
+    
+    public function test_admin_can_view_edit_product_form()
     {
         $product = Product::factory()->create();
 
@@ -77,8 +77,8 @@ class AdminProductControllerTest extends TestCase
         $response->assertViewHas('product', $product);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_update_a_product()
+    
+    public function test_admin_can_update_a_product()
     {
         $product = Product::factory()->create();
 

@@ -27,7 +27,6 @@ class UserControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get('/profile');
 
         $response->assertStatus(200);
-        // 👇 Ye web.php ke route ke hisab se update kiya gaya hai
         $response->assertViewIs('profile.show');
         $response->assertViewHas('user', function ($viewUser) {
             return $viewUser->id === $this->user->id;

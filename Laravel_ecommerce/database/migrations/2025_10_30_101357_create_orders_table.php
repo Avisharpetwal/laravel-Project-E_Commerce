@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->text('address');
             $table->string('payment_method');
             $table->decimal('total', 10, 2);
-            $table->enum('status', ['Pending', 'Shipped', 'Delivered', 'Cancelled'])->default('Pending');
+            $table->enum('status', ['Pending', 'Shipped','Confirmed', 'Delivered', 'Cancelled'])->default('Pending');
             $table->text('notes')->nullable();
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->string('coupon_code')->nullable();

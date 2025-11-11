@@ -23,8 +23,8 @@ class AdminCouponControllerTest extends TestCase
         ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_coupons_index()
+    
+    public function test_admin_can_view_coupons_index()
     {
         $response = $this->actingAs($this->admin)
                          ->get(route('admin.coupons.index'));
@@ -33,8 +33,8 @@ class AdminCouponControllerTest extends TestCase
         $response->assertViewIs('admin.coupons.index');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_create_coupon_form()
+    
+    public function test_admin_can_view_create_coupon_form()
     {
         $response = $this->actingAs($this->admin)
                          ->get(route('admin.coupons.create'));
@@ -43,8 +43,8 @@ class AdminCouponControllerTest extends TestCase
         $response->assertViewIs('admin.coupons.create');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_store_a_coupon()
+    
+    public function test_admin_can_store_a_coupon()
     {
         $data = [
             'code' => 'TEST10',
@@ -60,8 +60,8 @@ class AdminCouponControllerTest extends TestCase
         $this->assertDatabaseHas('coupons', ['code' => 'TEST10']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_edit_coupon_form()
+    
+    public function test_admin_can_view_edit_coupon_form()
     {
         $coupon = Coupon::factory()->create();
 
@@ -73,8 +73,8 @@ class AdminCouponControllerTest extends TestCase
         $response->assertViewHas('coupon', $coupon);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_update_a_coupon()
+    
+    public function test_admin_can_update_a_coupon()
     {
         $coupon = Coupon::factory()->create();
 
@@ -92,8 +92,8 @@ class AdminCouponControllerTest extends TestCase
         $this->assertDatabaseHas('coupons', ['code' => 'UPDATED10']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_delete_a_coupon()
+    
+    public function test_admin_can_delete_a_coupon()
     {
         $coupon = Coupon::factory()->create();
 

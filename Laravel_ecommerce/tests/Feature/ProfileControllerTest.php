@@ -33,7 +33,7 @@ class ProfileControllerTest extends TestCase
         $response->assertSee($this->user->email);
     }
 
-    /** @test */
+    
     public function test_authenticated_user_can_update_profile()
     {
         $newData = [

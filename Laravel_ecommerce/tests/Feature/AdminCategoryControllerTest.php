@@ -20,8 +20,8 @@ class AdminCategoryControllerTest extends TestCase
         $this->admin = User::factory()->create(['role' => 'admin']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_category_index(): void
+    
+    public function test_admin_can_view_category_index(): void
     {
         $parent = Category::factory()->create();
         $child = Category::factory()->create(['parent_id' => $parent->id]);
@@ -35,8 +35,8 @@ class AdminCategoryControllerTest extends TestCase
         $this->assertTrue($response->viewData('categories')->contains($parent));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_create_category(): void
+    
+    public function test_admin_can_create_category(): void
     {
         $data = [
             'name' => 'New Category',
@@ -50,8 +50,8 @@ class AdminCategoryControllerTest extends TestCase
         $this->assertDatabaseHas('categories', ['name' => 'New Category']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_edit_category(): void
+    
+    public function test_admin_can_edit_category(): void
     {
         $category = Category::factory()->create();
 
@@ -63,8 +63,8 @@ class AdminCategoryControllerTest extends TestCase
         $response->assertViewHas('category', $category);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_update_category(): void
+    
+    public function test_admin_can_update_category(): void
     {
         $category = Category::factory()->create(['name' => 'Old Name']);
 
@@ -77,8 +77,8 @@ class AdminCategoryControllerTest extends TestCase
         $this->assertDatabaseHas('categories', ['name' => 'Updated Name']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_delete_category(): void
+    
+    public function test_admin_can_delete_category(): void
     {
         $category = Category::factory()->create();
 
@@ -89,8 +89,8 @@ class AdminCategoryControllerTest extends TestCase
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_get_subcategories_as_json(): void
+    
+    public function test_admin_can_get_subcategories_as_json(): void
     {
         $parent = Category::factory()->create();
         $child = Category::factory()->create(['parent_id' => $parent->id]);

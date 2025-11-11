@@ -10,7 +10,6 @@ use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-#[\PHPUnit\Framework\Attributes\TestDox('Admin Controller Feature Tests')]
 class AdminControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -20,14 +19,12 @@ class AdminControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->admin = User::factory()->admin()->create();
+        $this->admin = User::factory()->create(['role' => 'admin']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_dashboard_is_accessible(): void
+    public function test_admin_dashboard_is_accessible(): void
     {
         $response = $this->actingAs($this->admin)->get('/admin/dashboard');
-
         $response->assertStatus(200);
         $response->assertViewIs('admin.dashboard');
         $response->assertViewHasAll([
@@ -37,8 +34,7 @@ class AdminControllerTest extends TestCase
         ]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_users_page(): void
+    public function test_admin_can_view_users_page(): void
     {
         User::factory()->count(3)->create(['role' => 'user']);
 
@@ -49,37 +45,34 @@ class AdminControllerTest extends TestCase
         $response->assertViewHas('users');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_toggle_block_status_of_user(): void
+    public function test_admin_can_toggle_block_status_of_user(): void
     {
         $user = User::factory()->create(['role' => 'user', 'is_blocked' => false]);
 
         $response = $this->actingAs($this->admin)
-                         ->post("/admin/users/{$user->id}/toggle");
+                         ->post(route('admin.users.toggle', $user->id));
 
         $response->assertRedirect();
-        $this->assertTrue((bool)  $user->fresh()->is_blocked);
+        $this->assertTrue((bool) $user->fresh()->is_blocked); 
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_manage_orders(): void
+    public function test_admin_can_manage_orders(): void
     {
         Order::factory()->count(2)->create();
 
-        $response = $this->actingAs($this->admin)->get('/admin/manage-orders');
+        $response = $this->actingAs($this->admin)->get(route('admin.manage.orders'));
 
         $response->assertStatus(200);
         $response->assertViewIs('admin.manage_orders');
         $response->assertViewHas('orders');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_update_order_status(): void
+    public function test_admin_can_update_order_status(): void
     {
         $order = Order::factory()->create(['status' => 'Pending']);
 
         $response = $this->actingAs($this->admin)
-                         ->put("/admin/manage-orders/{$order->id}/update-status", [
+                         ->put(route('admin.update.order.status', $order->id), [
                              'status' => 'Delivered'
                          ]);
 
@@ -87,8 +80,7 @@ class AdminControllerTest extends TestCase
         $this->assertEquals('Delivered', $order->fresh()->status);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function admin_can_view_order_details(): void
+    public function test_admin_can_view_order_details(): void
     {
         $user = User::factory()->create(['role' => 'user']);
         $category = Category::factory()->create();
@@ -109,5 +101,22 @@ class AdminControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewIs('admin.order_show');
         $response->assertViewHas('order');
+    }
+
+    public function test_non_admin_cannot_access_admin_routes(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+        $order = Order::factory()->create(['user_id' => $user->id]);
+
+        $routes = [
+            ['GET', route('admin.manage.orders'), null],
+            ['PUT', route('admin.update.order.status', $order->id), ['status' => 'Delivered']],
+            ['GET', route('admin.order.show', $order->id), null]
+        ];
+
+        foreach ($routes as [$method, $url, $data]) {
+            $response = $this->actingAs($user)->json($method, $url, $data ?? []);
+            $response->assertStatus(302); 
+        }
     }
 }
