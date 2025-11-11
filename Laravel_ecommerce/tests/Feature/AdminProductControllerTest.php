@@ -77,7 +77,7 @@ class AdminProductControllerTest extends TestCase
         $this->assertCount(1, $product->images()->where('type', 'video')->get());
 
         // Variants
-        $this->assertCount(4, $product->variants); // S-Red, S-Blue, M-Red, M-Blue
+        $this->assertCount(4, $product->variants); 
     }
 
     public function test_admin_can_view_edit_form_with_product()
