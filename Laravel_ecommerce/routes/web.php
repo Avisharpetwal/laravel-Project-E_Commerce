@@ -97,6 +97,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/coupons/{coupon}', [CouponController::class, 'update'])->name('admin.coupons.update');
     Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');
     Route::patch('/admin/orders/{order}/confirm', [OrderController::class, 'confirmOrder'])->name('admin.orders.confirm');
+
+   //Subtest
+    Route::get('/admin/categories/{id}/subcategories', [CategoryController::class, 'getSubcategories'])
+     ->name('admin.categories.subcategories');
+
 });
 
 // ---------------------- Cart Routes (Session-based) ----------------------    
