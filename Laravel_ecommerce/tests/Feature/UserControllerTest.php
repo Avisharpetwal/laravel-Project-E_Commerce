@@ -21,26 +21,24 @@ class UserControllerTest extends TestCase
         ]);
     }
 
-    
     public function test_authenticated_user_can_view_profile_page()
     {
         $response = $this->actingAs($this->user)->get('/profile');
 
         $response->assertStatus(200);
-        $response->assertViewIs('profile.show');
+        $response->assertViewIs('profile.show'); // ✅ updated
         $response->assertViewHas('user', function ($viewUser) {
             return $viewUser->id === $this->user->id;
         });
     }
 
-    
     public function test_user_can_update_their_name_without_password()
     {
         $response = $this->actingAs($this->user)->post('/profile', [
             'name' => 'Updated User',
+            'email' => $this->user->email, // ✅ added
             'password' => '',
             'password_confirmation' => '',
-            'email' => $this->user->email, 
         ]);
 
         $response->assertRedirect();
@@ -52,12 +50,11 @@ class UserControllerTest extends TestCase
         ]);
     }
 
-    
     public function test_user_can_update_password_successfully()
     {
         $response = $this->actingAs($this->user)->post('/profile', [
             'name' => $this->user->name,
-            'email' => $this->user->email,
+            'email' => $this->user->email, // ✅ added
             'password' => 'newpassword',
             'password_confirmation' => 'newpassword',
         ]);
@@ -69,21 +66,29 @@ class UserControllerTest extends TestCase
         $this->assertTrue(Hash::check('newpassword', $this->user->password));
     }
 
-    
-    public function test_unauthenticated_user_cannot_access_profile()
+    public function test_unauthenticated_user_cannot_access_profile_page()
     {
         $response = $this->get('/profile');
         $response->assertRedirect('/login');
     }
 
-    
     public function test_unauthenticated_user_cannot_update_profile()
     {
         $response = $this->post('/profile', [
-            'name' => 'New Name',
+            'name' => 'Hacker',
             'password' => '',
             'password_confirmation' => '',
         ]);
         $response->assertRedirect('/login');
+    }
+
+    public function test_profile_update_fails_with_invalid_data()
+    {
+        $response = $this->actingAs($this->user)->post('/profile', [
+            'name' => '',
+            'email' => '', // ✅ included
+        ]);
+
+        $response->assertSessionHasErrors(['name', 'email']);
     }
 }
