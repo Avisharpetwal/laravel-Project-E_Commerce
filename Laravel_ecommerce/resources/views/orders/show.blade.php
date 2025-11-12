@@ -62,12 +62,20 @@
                     <tr>
                         <td>{{ $item->product->title ?? 'Product Deleted' }}</td>
                         <td>
-                            @if($item->product && $item->product->images->first())
+                            <!-- @if($item->product && $item->product->images->first())
                                 <img src="{{ asset('storage/'.$item->product->images->first()->path) }}" 
                                      width="70" class="rounded shadow">
                             @else
                                 <span class="text-muted">No Image</span>
-                            @endif
+                            @endif -->
+                        @if($item->product && $item->product->images->first())
+                        <a href="{{ route('products.show', $item->product->id) }}">
+                        <img src="{{ asset('storage/'.$item->product->images->first()->path) }}" 
+                     width="70" class="rounded shadow hover:scale-105 transition duration-200">
+                    </a>
+                    @else
+                    <span class="text-muted">No Image</span>
+                    @endif
                         </td>
                         <td>{{ number_format($item->price, 2) }}</td>
                         <td>{{ $item->quantity }}</td>
@@ -84,11 +92,12 @@
         @endphp
 
         <div class="text-end mt-4 pe-2">
-            <p><strong>Subtotal:</strong> ₹{{ number_format($subtotal, 2) }}</p>
+            <!-- <p><strong>Subtotal:</strong> ₹{{ number_format($subtotal, 2) }}</p>
             <p><strong>Tax (10%):</strong> ₹{{ number_format($tax, 2) }}</p>
             <p class="text-xl font-bold text-green-700">
                 Grand Total: ₹{{ number_format($grandTotal, 2) }}
-            </p>
+            </p> -->
+             <p class="mt-2"><strong>Total:</strong> ₹{{ number_format($order->total, 2) }}</p>
         </div>
     </div>
 

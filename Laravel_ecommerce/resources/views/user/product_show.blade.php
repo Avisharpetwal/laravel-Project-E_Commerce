@@ -93,7 +93,7 @@
     @if($product->stock_qty > 0)
         @php
             $cart = session()->get('cart', []);
-            $currentQty = isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 1;
+            $currentQty = isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0;
         @endphp
 
         <!-- Quantity Selector -->
@@ -101,7 +101,7 @@
             <h6 class="mr-3 font-medium text-gray-700">Quantity In Your Cart</h6>
             <button type="button" id="decreaseQty" class="bg-gray-300 px-3 py-1 rounded-l">-</button>
             <input type="number" id="quantityInput" name="quantity"
-                value="{{ $currentQty }}" min="1" max="{{ $product->stock_qty }}"
+                value="{{ $currentQty }}" min="0" max="{{ $product->stock_qty }}"
                 class="w-16 text-center border-t border-b border-gray-300" readonly>
             <button type="button" id="increaseQty" class="bg-gray-300 px-3 py-1 rounded-r">+</button>
         </div>
