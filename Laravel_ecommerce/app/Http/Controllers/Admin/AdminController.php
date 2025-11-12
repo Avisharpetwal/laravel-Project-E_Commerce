@@ -46,7 +46,7 @@ class AdminController extends Controller
         //Weekly Sales
         $weekStart = Carbon::now()->startOfWeek();
         $weekSales = Order::where('status', 'Delivered')
-        ->whereBetween('created_at', [$weekStart, Carbon::now()])
+        ->whereBetween('updated_at', [$weekStart, Carbon::now()])
         ->sum('total');
 
 
