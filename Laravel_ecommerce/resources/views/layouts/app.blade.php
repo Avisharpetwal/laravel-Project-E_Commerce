@@ -8,7 +8,7 @@
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
 
-    {{-- Bootstrap (agar kahin pe use ho raha ho) --}}
+    {{-- Bootstrap --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
@@ -23,7 +23,7 @@
         @yield('content')
     </main>
 
-    {{--  Footer (optional future use ke liye) --}}
+    {{--  Footer  --}}
     <footer class="bg-black text-white text-center py-3">
         <p class="mb-0 text-sm">&copy; {{ date('Y') }} Laravel eCommerce — All Rights Reserved.</p>
     </footer>

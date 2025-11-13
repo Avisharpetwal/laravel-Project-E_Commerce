@@ -57,7 +57,7 @@ class AdminController extends Controller
         ->sum('total');
 
 
-        // ✅ Top 5 Selling Products
+        //  Top 5 Selling Products
         $topProducts = OrderItem::select('product_id', DB::raw('SUM(quantity) as total_qty'))
             ->groupBy('product_id')
             ->orderByDesc('total_qty')
